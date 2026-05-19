@@ -1,7 +1,6 @@
 import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
-import 'package:fourteen_november/features/user/domain/user_model_extension.dart';
 
 part 'user_model.g.dart';
 
@@ -31,6 +30,9 @@ class User extends HiveObject {
   @HiveField(7)
   final DateTime updated;
 
+  @HiveField(8)
+  final String avatarUrl;
+
   User({
     required this.id,
     required this.name,
@@ -40,25 +42,25 @@ class User extends HiveObject {
     required this.verified,
     required this.created,
     required this.updated,
+    required this.avatarUrl,
   });
 
   factory User.fromRecordModel(RecordModel model) {
+    final pb = PocketBaseService.I.instance;
+
+    final avatarPath = model.getStringValue("avatar");
+    final url = pb.files.getURL(model, avatarPath).toString();
+
     return User(
       id: model.id,
       name: model.getStringValue("name"),
-      avatarPath: model.getStringValue("avatar"),
+      avatarPath: avatarPath,
       email: model.getStringValue("email"),
       emailVisibility: model.getBoolValue("emailVisibility"),
       verified: model.getBoolValue("verified"),
       created: DateTime.parse(model.get("created")),
       updated: DateTime.parse(model.get("updated")),
+      avatarUrl: url,
     );
-  }
-
-  Future<String> get avatarUrl async {
-    final pb = PocketBaseService.I.instance;
-    final recordModel = await toRecordModel();
-
-    return pb.files.getURL(recordModel, avatarPath).toString();
   }
 }

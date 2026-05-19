@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fourteen_november/core/router/route_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:fourteen_november/features/post/post.dart';
@@ -14,14 +16,14 @@ part 'widgets/post/widgets/description_row.dart';
 part 'widgets/post/widgets/cta_buttons/cta_buttons.dart';
 part 'widgets/post/widgets/cta_buttons/widgets/button.dart';
 
-class MemoryScreen extends StatefulWidget {
-  const MemoryScreen({super.key});
+class MemoriesScreen extends StatefulWidget {
+  const MemoriesScreen({super.key});
 
   @override
-  State<MemoryScreen> createState() => _MemoryScreenState();
+  State<MemoriesScreen> createState() => _MemoriesScreenState();
 }
 
-class _MemoryScreenState extends State<MemoryScreen> {
+class _MemoriesScreenState extends State<MemoriesScreen> {
   List<Post>? _posts;
 
   @override
@@ -41,6 +43,11 @@ class _MemoryScreenState extends State<MemoryScreen> {
           child: _View(posts: _posts, onPostChanged: _fetchPosts),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToNewMemoryScreen,
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -50,5 +57,9 @@ class _MemoryScreenState extends State<MemoryScreen> {
     setState(() {
       _posts = res;
     });
+  }
+
+  void _navigateToNewMemoryScreen() {
+    context.push(RouteProvider.newMemory);
   }
 }

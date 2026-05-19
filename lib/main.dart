@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fourteen_november/theme/app_theme.dart';
 import 'package:fourteen_november/core/router/app_router.dart';
-import 'package:fourteen_november/services/hive/hive_service.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
+import 'package:fourteen_november/core/bootstrap/app_initializer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await HiveService.initialize();
-
-  await PocketBaseService.initialize();
+  await AppInitializer.init();
 
   runApp(const MyApp());
 }

@@ -44,11 +44,11 @@ class Mood extends HiveObject {
     );
   }
 
-  Future<User> get user async {
-    final user = await UserRepository().getOne(userId);
-
-    if (user == null) throw ArgumentError("User for mood $id is not found");
-
+  User get user {
+    final user = UserRepository().getOne(userId);
+    if (user == null) {
+      throw ArgumentError("User for mood $id not found");
+    }
     return user;
   }
 }

@@ -19,23 +19,26 @@ class BackgroundAdapter extends TypeAdapter<Background> {
     return Background(
       id: fields[0] as String,
       imagePath: fields[1] as String,
-      created: fields[6] as DateTime,
-      updated: fields[7] as DateTime,
+      created: fields[3] as DateTime,
+      updated: fields[4] as DateTime,
+      imageUrl: fields[5] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Background obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.imagePath)
-      ..writeByte(6)
+      ..writeByte(3)
       ..write(obj.created)
-      ..writeByte(7)
-      ..write(obj.updated);
+      ..writeByte(4)
+      ..write(obj.updated)
+      ..writeByte(5)
+      ..write(obj.imageUrl);
   }
 
   @override

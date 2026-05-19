@@ -24,7 +24,14 @@ final appRouter = GoRouter(
     GoRoute(
       path: RouteProvider.memories,
       builder: (context, state) {
-        return MemoryScreen();
+        return MemoriesScreen();
+      },
+    ),
+
+    GoRoute(
+      path: RouteProvider.newMemory,
+      builder: (context, state) {
+        return NewMemoryScreen();
       },
     ),
   ],

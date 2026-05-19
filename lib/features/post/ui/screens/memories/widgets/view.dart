@@ -1,4 +1,4 @@
-part of '../memory_screen.dart';
+part of '../memories_screen.dart';
 
 class _View extends StatelessWidget {
   final List<Post>? posts;

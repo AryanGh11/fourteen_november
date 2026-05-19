@@ -1,7 +1,6 @@
 import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
-import 'package:fourteen_november/features/background/domain/background_model_extension.dart';
 
 part 'background_model.g.dart';
 
@@ -13,32 +12,35 @@ class Background extends HiveObject {
   @HiveField(1)
   final String imagePath;
 
-  @HiveField(6)
+  @HiveField(3)
   final DateTime created;
 
-  @HiveField(7)
+  @HiveField(4)
   final DateTime updated;
+
+  @HiveField(5)
+  final String imageUrl;
 
   Background({
     required this.id,
     required this.imagePath,
     required this.created,
     required this.updated,
+    required this.imageUrl,
   });
 
   factory Background.fromRecordModel(RecordModel model) {
+    final pb = PocketBaseService.I.instance;
+
+    final imagePath = model.getStringValue("image");
+    final url = pb.files.getURL(model, imagePath).toString();
+
     return Background(
       id: model.id,
-      imagePath: model.getStringValue("image"),
+      imagePath: imagePath,
       created: DateTime.parse(model.get("created")),
       updated: DateTime.parse(model.get("updated")),
+      imageUrl: url,
     );
-  }
-
-  Future<String> get imageUrl async {
-    final pb = PocketBaseService.I.instance;
-    final recordModel = await toRecordModel();
-
-    return pb.files.getURL(recordModel, imagePath).toString();
   }
 }

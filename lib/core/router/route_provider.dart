@@ -4,4 +4,5 @@ class RouteProvider {
   static String get moods => "/moods";
 
   static String get memories => "/memories";
+  static String get newMemory => "/newMemory";
 }

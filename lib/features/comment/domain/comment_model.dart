@@ -1,6 +1,6 @@
-import 'package:fourteen_november/features/post/post.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/user/user.dart';
 
 part 'comment_model.g.dart';
@@ -45,19 +45,19 @@ class Comment extends HiveObject {
     );
   }
 
-  Future<User> get user async {
-    final user = await UserRepository().getOne(userId);
-
-    if (user == null) throw ArgumentError("User for comment $id is not found");
-
+  User get user {
+    final user = UserRepository().getOne(userId);
+    if (user == null) {
+      throw ArgumentError("User for post $id not found");
+    }
     return user;
   }
 
-  Future<Post> get post async {
-    final post = await PostRepository().getOne(postId);
-
-    if (post == null) throw ArgumentError("User for comment $id is not found");
-
+  Post get post {
+    final post = PostRepository().getOne(postId);
+    if (post == null) {
+      throw ArgumentError("Post for post $id not found");
+    }
     return post;
   }
 }

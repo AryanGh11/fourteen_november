@@ -25,13 +25,14 @@ class PostAdapter extends TypeAdapter<Post> {
       commentsIds: (fields[5] as List).cast<String>(),
       created: fields[6] as DateTime,
       updated: fields[7] as DateTime,
+      attachmentUrl: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Post obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class PostAdapter extends TypeAdapter<Post> {
       ..writeByte(6)
       ..write(obj.created)
       ..writeByte(7)
-      ..write(obj.updated);
+      ..write(obj.updated)
+      ..writeByte(8)
+      ..write(obj.attachmentUrl);
   }
 
   @override

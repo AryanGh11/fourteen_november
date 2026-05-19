@@ -1,10 +1,9 @@
-part of '../../../memory_screen.dart';
+part of '../../../memories_screen.dart';
 
 class _DescriptionRow extends StatelessWidget {
   final Post post;
-  final User? postUser;
 
-  const _DescriptionRow({required this.post, required this.postUser});
+  const _DescriptionRow({required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class _DescriptionRow extends StatelessWidget {
       spacing: 6,
       children: [
         Text(
-          postUser?.name ?? "",
+          post.user.name,
           style: textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         Text(post.description, style: textTheme.labelSmall),

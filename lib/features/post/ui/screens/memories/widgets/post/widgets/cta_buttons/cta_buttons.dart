@@ -1,4 +1,4 @@
-part of '../../../../memory_screen.dart';
+part of '../../../../memories_screen.dart';
 
 class _CTAButtons extends StatefulWidget {
   final Post post;
@@ -49,7 +49,7 @@ class _CTAButtonsState extends State<_CTAButtons> {
     final currentUser = UserProviderService().current;
     if (currentUser == null) return;
 
-    await PostRepository().like(widget.post.id, widget.post.userId);
+    await PostRepository().toggleLike(widget.post.id);
 
     await widget.onPostChanged();
   }

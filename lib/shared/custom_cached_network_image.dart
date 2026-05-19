@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 
 class CustomCachedNetworkImage extends CachedNetworkImage {
   CustomCachedNetworkImage({
@@ -34,4 +35,13 @@ class CustomCachedNetworkImage extends CachedNetworkImage {
     super.imageRenderMethodForWeb,
     super.scale,
   });
+
+  @override
+  PlaceholderWidgetBuilder? get placeholder {
+    return (context, url) {
+      final colors = Theme.of(context).colorScheme;
+
+      return Container(color: colors.surfaceContainer);
+    };
+  }
 }

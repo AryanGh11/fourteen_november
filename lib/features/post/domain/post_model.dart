@@ -1,7 +1,6 @@
 import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
-import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
 import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
 
@@ -33,6 +32,9 @@ class Post extends HiveObject {
   @HiveField(7)
   final DateTime updated;
 
+  @HiveField(8)
+  final String attachmentUrl;
+
   Post({
     required this.id,
     required this.userId,
@@ -42,9 +44,16 @@ class Post extends HiveObject {
     required this.commentsIds,
     required this.created,
     required this.updated,
+    required this.attachmentUrl,
   });
 
   factory Post.fromRecordModel(RecordModel model) {
+    final pb = PocketBaseService.I.instance;
+
+    final attachmentPath = model.getStringValue("attachment");
+
+    final url = pb.files.getURL(model, attachmentPath).toString();
+
     return Post(
       id: model.id,
       userId: model.getStringValue("userId"),
@@ -54,26 +63,23 @@ class Post extends HiveObject {
       commentsIds: model.getListValue("commentsIds"),
       created: DateTime.parse(model.get("created")),
       updated: DateTime.parse(model.get("updated")),
+      attachmentUrl: url,
     );
   }
 
-  Future<User> get user async {
-    final user = await UserRepository().getOne(userId);
-
-    if (user == null) throw ArgumentError("User for post $id is not found");
-
-    return user;
-  }
-
-  Future<String> get attachmentUrl async {
-    final pb = PocketBaseService.I.instance;
-    final recordModel = await toRecordModel();
-
-    return pb.files.getURL(recordModel, attachmentPath).toString();
-  }
-
-  Future<List<Comment>> get comments async {
-    final comments = await CommentRepository().getMany(commentsIds);
+  List<Comment> get comments {
+    final comments = CommentRepository()
+        .getAll()
+        .where((c) => commentsIds.contains(c.id))
+        .toList();
     return comments;
+  }
+
+  User get user {
+    final user = UserRepository().getOne(userId);
+    if (user == null) {
+      throw ArgumentError("User for post $id not found");
+    }
+    return user;
   }
 }
