@@ -10,10 +10,6 @@ class _Content extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final formattedCreatedAt = intl.DateFormat(
-      'dd MMM yyyy, HH:mm',
-    ).format(post.created);
-
     return Container(
       decoration: BoxDecoration(color: colors.surface),
       padding: EdgeInsets.all(8),
@@ -35,7 +31,7 @@ class _Content extends StatelessWidget {
             children: [
               Text(post.user.name, style: textTheme.labelSmall),
               Text(
-                formattedCreatedAt,
+                DateFormatter.format(date: post.created),
                 style: textTheme.labelSmall?.copyWith(fontSize: 9),
               ),
             ],

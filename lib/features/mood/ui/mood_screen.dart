@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/mood/mood.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
 import 'package:fourteen_november/shared/app_messenger.dart';
 import 'package:fourteen_november/shared/default_app_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fourteen_november/core/utils/date_formatter/date_formatter.dart';
 import 'package:fourteen_november/shared/custom_circular_progress_indicator.dart';
 import 'package:fourteen_november/shared/dialogs/add_mood_dialog/add_mood_dialog.dart';
 
