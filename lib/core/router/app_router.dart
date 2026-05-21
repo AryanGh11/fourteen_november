@@ -22,16 +22,16 @@ final appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: RouteProvider.memories,
+      path: RouteProvider.posts,
       builder: (context, state) {
-        return MemoriesScreen();
+        return PostsScreen();
       },
     ),
 
     GoRoute(
-      path: RouteProvider.newMemory,
+      path: RouteProvider.newPost,
       builder: (context, state) {
-        return NewMemoryScreen();
+        return NewPostScreen();
       },
     ),
   ],

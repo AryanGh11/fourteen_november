@@ -44,7 +44,7 @@ class _Tiles extends StatelessWidget {
         _Tile(
           title: "Our Memories",
           icon: LucideIcons.heartPulse,
-          onTap: () => _navigateTo(context, RouteProvider.memories),
+          onTap: () => _navigateTo(context, RouteProvider.posts),
         ),
       ],
     );

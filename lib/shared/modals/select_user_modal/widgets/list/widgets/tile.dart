@@ -1,22 +1,9 @@
 part of '../../../select_user_modal.dart';
 
-class _Tile extends StatefulWidget {
+class _Tile extends StatelessWidget {
   final User user;
 
   const _Tile({required this.user});
-
-  @override
-  State<_Tile> createState() => _TileState();
-}
-
-class _TileState extends State<_Tile> {
-  String? _avatarUrl;
-
-  @override
-  void initState() {
-    _fetchUserAvatar();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +14,24 @@ class _TileState extends State<_Tile> {
       color: colors.surfaceContainer,
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
+        splashColor: colors.surfaceContainerHighest,
+        highlightColor: colors.surfaceContainerHighest,
         onTap: () => _onUserTapped(context),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          padding: EdgeInsets.all(16),
           child: Row(
-            spacing: 8,
+            spacing: 12,
             children: [
-              _avatarUrl == null
-                  ? CircleAvatar()
-                  : CircleAvatar(backgroundImage: NetworkImage(_avatarUrl!)),
-              Text(widget.user.name),
+              Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                child: CustomCachedNetworkImage(
+                  imageUrl: user.avatarUrl,
+                  width: 48,
+                  height: 48,
+                ),
+              ),
+              Text(user.name),
             ],
           ),
         ),
@@ -45,14 +40,6 @@ class _TileState extends State<_Tile> {
   }
 
   void _onUserTapped(BuildContext context) {
-    Navigator.of(context).pop(widget.user);
-  }
-
-  Future<void> _fetchUserAvatar() async {
-    final avatarUrl = await widget.user.avatarUrl;
-
-    setState(() {
-      _avatarUrl = avatarUrl;
-    });
+    Navigator.of(context).pop(user);
   }
 }

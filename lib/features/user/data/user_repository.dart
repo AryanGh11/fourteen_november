@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
@@ -85,6 +84,7 @@ class UserRepository implements BaseRepository<User> {
       }
     } catch (e) {
       debugPrint("User sync failed: $e");
+      rethrow;
     }
   }
 

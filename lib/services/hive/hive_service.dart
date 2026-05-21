@@ -33,4 +33,12 @@ class HiveService {
     await Hive.openBox<Post>(postsBoxKey);
     await Hive.openBox<User>(usersBoxKey);
   }
+
+  static Future<void> hardRefreshBoxes() async {
+    await BackgroundRepository().hardRefresh();
+    await CommentRepository().hardRefresh();
+    await MoodRepository().hardRefresh();
+    await PostRepository().hardRefresh();
+    await UserRepository().hardRefresh();
+  }
 }

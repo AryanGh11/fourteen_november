@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 final darkTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: AppColors.darkBackground,
+  scaffoldBackgroundColor: AppColors.darkSurface,
   colorScheme: const ColorScheme.dark(
     primary: AppColors.primary,
     secondary: AppColors.secondary,
     surface: AppColors.darkSurface,
+    surfaceContainerLowest: AppColors.darkSurfaceContainerLowest,
+    surfaceContainerLow: AppColors.darkSurfaceContainerLow,
+    surfaceContainer: AppColors.darkSurfaceContainer,
+    surfaceContainerHigh: AppColors.darkSurfaceContainerHigh,
+    surfaceContainerHighest: AppColors.darkSurfaceContainerHighest,
     error: Colors.redAccent,
   ),
   cardColor: AppColors.darkCard,

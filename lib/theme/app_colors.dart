@@ -9,16 +9,29 @@ class AppColors {
   static const accent = Color(0xFFFFB7C5);
 
   // Dark Theme
-  static const darkBackground = Color(0xFF18161D);
-  static const darkSurface = Color(0xFF211F2A);
-  static const darkCard = Color(0xFF2A2735);
+  static const darkSurface = Color(0xFF111111);
+
+  static const darkSurfaceContainerLowest = Color(0xFF0D0D0D);
+  static const darkSurfaceContainerLow = Color(0xFF141414);
+  static const darkSurfaceContainer = Color(0xFF1A1A1A);
+  static const darkSurfaceContainerHigh = Color(0xFF222222);
+  static const darkSurfaceContainerHighest = Color(0xFF2B2B2B);
+
+  static const darkCard = Color(0xFF222222);
 
   static const darkTextPrimary = Color(0xFFF2F1F5);
   static const darkTextSecondary = Color(0xFFB6B2C2);
 
   // Light Theme
-  static const lightBackground = Color(0xFFFAF8FF);
-  static const lightSurface = Color(0xFFF1ECFF);
+  static const lightSurface = Color(0xFFF7F7F7);
+
+  static const lightSurfaceContainerLowest = Color(0xFFFFFFFF);
+  static const lightSurfaceContainerLow = Color(0xFFF8F8F8);
+  static const lightSurfaceContainer = Color(0xFFF3F3F3);
+  static const lightSurfaceContainerHigh = Color(0xFFECECEC);
+  static const lightSurfaceContainerHighest = Color(0xFFE4E4E4);
+
+  static const lightCard = Color(0xFFFFFFFF);
 
   static const lightTextPrimary = Color(0xFF1D1B22);
   static const lightTextSecondary = Color(0xFF6F6A7A);

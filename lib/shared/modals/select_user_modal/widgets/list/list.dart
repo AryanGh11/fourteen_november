@@ -8,6 +8,7 @@ class _List extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      width: double.infinity,
       height: 120 * 2,
       child: Column(
         spacing: 10,

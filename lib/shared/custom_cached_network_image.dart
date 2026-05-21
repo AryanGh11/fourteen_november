@@ -38,7 +38,16 @@ class CustomCachedNetworkImage extends CachedNetworkImage {
 
   @override
   PlaceholderWidgetBuilder? get placeholder {
-    return (context, url) {
+    return (context, _) {
+      final colors = Theme.of(context).colorScheme;
+
+      return Container(color: colors.surfaceContainer);
+    };
+  }
+
+  @override
+  Widget Function(BuildContext, String, Object)? get errorWidget {
+    return (context, _, __) {
       final colors = Theme.of(context).colorScheme;
 
       return Container(color: colors.surfaceContainer);

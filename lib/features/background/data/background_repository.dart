@@ -87,6 +87,7 @@ class BackgroundRepository implements BaseRepository<Background> {
       }
     } catch (e) {
       debugPrint("Background sync failed: $e");
+      rethrow;
     }
   }
 

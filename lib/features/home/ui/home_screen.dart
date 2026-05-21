@@ -4,7 +4,10 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:fourteen_november/theme/dark_theme.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
+import 'package:fourteen_november/shared/app_messenger.dart';
 import 'package:fourteen_november/shared/default_app_bar.dart';
+import 'package:fourteen_november/services/hive/hive_service.dart';
+import 'package:fourteen_november/shared/loading_icon_button.dart';
 import 'package:fourteen_november/core/router/route_provider.dart';
 import 'package:fourteen_november/shared/animated_background.dart';
 import 'package:fourteen_november/features/background/background.dart';
@@ -22,6 +25,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _backgrounds = BackgroundRepository().getAll();
+  bool _hardRefreshing = false;
 
   @override
   void initState() {
@@ -37,7 +41,18 @@ class _HomeScreenState extends State<HomeScreen> {
     final randomBackgrounds = _backgrounds..shuffle();
 
     return Scaffold(
-      appBar: DefaultAppBar(title: Text("14 November 💕")),
+      appBar: DefaultAppBar(
+        title: Text("14 November 💕"),
+        foregroundColor: Colors.white,
+        actions: [
+          LoadingIconButton(
+            onPressed: _onHardRefresh,
+            icon: Icon(Icons.refresh),
+            loading: _hardRefreshing,
+            loadingColor: Colors.white,
+          ),
+        ],
+      ),
       extendBodyBehindAppBar: true,
       body: Theme(
         data: darkTheme,
@@ -69,6 +84,22 @@ class _HomeScreenState extends State<HomeScreen> {
       if (selectedUser == null) return;
 
       await UserProviderService().update(selectedUser.id);
+    }
+  }
+
+  Future<void> _onHardRefresh() async {
+    setState(() {
+      _hardRefreshing = true;
+    });
+    try {
+      await HiveService.hardRefreshBoxes();
+    } catch (_) {
+      if (!mounted) return;
+      AppMessenger.showError(context, 'نت عالیه! یبار دیگه بزن نفس');
+    } finally {
+      setState(() {
+        _hardRefreshing = false;
+      });
     }
   }
 }

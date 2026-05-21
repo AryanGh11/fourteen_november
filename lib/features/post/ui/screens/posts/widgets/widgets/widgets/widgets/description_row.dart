@@ -1,4 +1,4 @@
-part of '../../../memories_screen.dart';
+part of '../../../../posts_screen.dart';
 
 class _DescriptionRow extends StatelessWidget {
   final Post post;
@@ -10,14 +10,21 @@ class _DescriptionRow extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 6,
       children: [
         Text(
           post.user.name,
           style: textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
-        Text(post.description, style: textTheme.labelSmall),
+        Expanded(
+          child: Text(
+            post.description,
+            style: textTheme.labelSmall,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 999,
+          ),
+        ),
       ],
     );
   }

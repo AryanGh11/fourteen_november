@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fourteen_november/services/shared_performance/shared_performance_service.dart';
+import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
 
 class DefaultAppBar extends AppBar {
   DefaultAppBar({
@@ -22,7 +21,7 @@ class DefaultAppBar extends AppBar {
     super.iconTheme,
     super.actionsIconTheme,
     super.primary,
-    super.centerTitle,
+    super.centerTitle = true,
     super.excludeHeaderSemantics,
     super.titleSpacing,
     super.toolbarOpacity,
@@ -40,30 +39,9 @@ class DefaultAppBar extends AppBar {
 
   @override
   Widget? get title {
-    return GestureDetector(onTap: _pastePocketBaseUrl, child: super.title);
-  }
-
-  Future<void> _pastePocketBaseUrl() async {
-    final data = await Clipboard.getData(Clipboard.kTextPlain);
-    final text = data?.text?.trim();
-
-    if (text == null) return;
-
-    final urlRegex = RegExp(
-      r'^(https?:\/\/)'
-      r'('
-      r'(([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,})' // domain
-      r'|'
-      r'((\d{1,3}\.){3}\d{1,3})' // IPv4
-      r'|'
-      r'(localhost)' // localhost
-      r')'
-      r'(:\d+)?'
-      r'(\/.*)?$',
+    return GestureDetector(
+      onTap: PocketBaseService.pasteUrl,
+      child: super.title,
     );
-
-    if (!urlRegex.hasMatch(text)) return;
-
-    await SharedPerformanceService.put('pocketBaseUrl', text);
   }
 }

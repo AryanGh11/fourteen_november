@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 final lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
-  scaffoldBackgroundColor: AppColors.lightBackground,
+  scaffoldBackgroundColor: AppColors.lightSurface,
   colorScheme: const ColorScheme.light(
     primary: AppColors.primary,
     secondary: AppColors.secondary,
     surface: AppColors.lightSurface,
+    surfaceContainerLowest: AppColors.lightSurfaceContainerLowest,
+    surfaceContainerLow: AppColors.lightSurfaceContainerLow,
+    surfaceContainer: AppColors.lightSurfaceContainer,
+    surfaceContainerHigh: AppColors.lightSurfaceContainerHigh,
+    surfaceContainerHighest: AppColors.lightSurfaceContainerHighest,
     error: Colors.redAccent,
   ),
   appBarTheme: const AppBarTheme(

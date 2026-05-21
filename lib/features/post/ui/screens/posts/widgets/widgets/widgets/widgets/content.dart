@@ -1,4 +1,4 @@
-part of '../../../memories_screen.dart';
+part of '../../../../posts_screen.dart';
 
 class _Content extends StatelessWidget {
   final Post post;
@@ -11,19 +11,24 @@ class _Content extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     final formattedCreatedAt = intl.DateFormat(
-      'dd MMM yy / HH:mm',
+      'dd MMM yyyy, HH:mm',
     ).format(post.created);
 
     return Container(
-      decoration: BoxDecoration(color: colors.surface.withValues(alpha: 0.5)),
+      decoration: BoxDecoration(color: colors.surface),
       padding: EdgeInsets.all(8),
       child: Row(
         spacing: 8,
         children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundImage: NetworkImage(post.user.avatarUrl),
-            backgroundColor: colors.surfaceContainer,
+          Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(shape: BoxShape.circle),
+            child: CustomCachedNetworkImage(
+              imageUrl: post.user.avatarUrl,
+              width: 32,
+              height: 32,
+              fit: BoxFit.cover,
+            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

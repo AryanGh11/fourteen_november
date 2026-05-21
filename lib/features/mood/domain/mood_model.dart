@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:fourteen_november/theme/app_colors.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
 
@@ -38,7 +41,7 @@ class Mood extends HiveObject {
       id: model.id,
       userId: model.getStringValue("userId"),
       value: model.getIntValue("value"),
-      note: model.getStringValue("note"),
+      note: model.get("note"),
       created: DateTime.parse(model.get("created")),
       updated: DateTime.parse(model.get("updated")),
     );
@@ -50,5 +53,39 @@ class Mood extends HiveObject {
       throw ArgumentError("User for mood $id not found");
     }
     return user;
+  }
+
+  static IconData getIconForValue(int value) {
+    switch (value) {
+      case 1:
+        return LucideIcons.frown;
+      case 2:
+        return LucideIcons.annoyed;
+      case 3:
+        return LucideIcons.meh;
+      case 4:
+        return LucideIcons.smile;
+      case 5:
+        return LucideIcons.laugh;
+      default:
+        return LucideIcons.laugh;
+    }
+  }
+
+  static Color getColorForValue(int value) {
+    switch (value) {
+      case 1:
+        return AppColors.moodTerrible;
+      case 2:
+        return AppColors.moodBad;
+      case 3:
+        return AppColors.moodOkay;
+      case 4:
+        return AppColors.moodGood;
+      case 5:
+        return AppColors.moodAmazing;
+      default:
+        return AppColors.moodAmazing;
+    }
   }
 }

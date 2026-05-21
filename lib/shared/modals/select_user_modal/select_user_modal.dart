@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fourteen_november/features/user/user.dart';
+import 'package:fourteen_november/shared/custom_cached_network_image.dart';
 
 part 'widgets/list/list.dart';
 part 'widgets/list/widgets/tile.dart';
@@ -18,21 +19,10 @@ Future<User?> showSelectUserModal(BuildContext context) async {
   );
 }
 
-class _Content extends StatefulWidget {
-  const _Content();
+class _Content extends StatelessWidget {
+  _Content();
 
-  @override
-  State<_Content> createState() => _ContentState();
-}
-
-class _ContentState extends State<_Content> {
-  List<User>? _users;
-
-  @override
-  void initState() {
-    _fetchUsers();
-    super.initState();
-  }
+  final _users = UserRepository().getAll();
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +35,13 @@ class _ContentState extends State<_Content> {
         children: [
           SizedBox(height: 10),
           Text(
-            "Welcome! Wer bist du?",
+            "هالووو! شما؟",
             style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w500),
           ),
           SizedBox(height: 30),
-          if (_users != null)
-            _List(users: _users!)
-          else
-            CircularProgressIndicator(),
+          _List(users: _users),
         ],
       ),
     );
-  }
-
-  Future<void> _fetchUsers() async {
-    final res = await UserRepository().getAll();
-    setState(() {
-      _users = res;
-    });
   }
 }

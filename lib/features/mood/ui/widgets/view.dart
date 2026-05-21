@@ -9,7 +9,7 @@ class _View extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: onRefresh,
+      onRefresh: () async => await onRefresh(),
       child: SizedBox(child: _List(moods: moods)),
     );
   }

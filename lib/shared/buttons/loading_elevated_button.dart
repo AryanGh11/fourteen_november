@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fourteen_november/shared/custom_circular_progress_indicator.dart';
 
 class LoadingElevatedButton extends StatelessWidget {
   final bool loading;
@@ -22,8 +23,6 @@ class LoadingElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return Stack(
       children: [
         SizedBox(
@@ -31,7 +30,7 @@ class LoadingElevatedButton extends StatelessWidget {
           height: buttonSizedBoxHeight,
           child: ElevatedButton(
             style: style,
-            onPressed: onPressed,
+            onPressed: loading ? null : onPressed,
             child: Opacity(opacity: loading ? 0 : 1, child: child),
           ),
         ),
@@ -41,12 +40,7 @@ class LoadingElevatedButton extends StatelessWidget {
               child: SizedBox(
                 width: indicatorSize,
                 height: indicatorSize,
-                child:
-                    loadingWidget ??
-                    CircularProgressIndicator(
-                      color: colors.secondary,
-                      strokeWidth: 2,
-                    ),
+                child: loadingWidget ?? CustomCircularProgressIndicator(),
               ),
             ),
           ),

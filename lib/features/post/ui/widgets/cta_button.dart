@@ -1,14 +1,18 @@
-part of '../../../../../memories_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:fourteen_november/shared/custom_circular_progress_indicator.dart';
 
-class _CTAButton extends StatelessWidget {
+class PostScreenCTAButton extends StatelessWidget {
   final int count;
   final Widget icon;
   final Future<void> Function()? onTap;
+  final bool loading;
 
-  const _CTAButton({
+  const PostScreenCTAButton({
+    super.key,
     required this.count,
     required this.icon,
     required this.onTap,
+    required this.loading,
   });
 
   @override
@@ -18,11 +22,18 @@ class _CTAButton extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(minWidth: 40),
       child: GestureDetector(
-        onTap: onTap,
+        onTap: loading ? null : onTap,
         child: Row(
           spacing: 4,
           children: [
-            icon,
+            loading
+                ? Container(
+                    padding: EdgeInsets.all(4),
+                    width: 24,
+                    height: 24,
+                    child: Center(child: CustomCircularProgressIndicator()),
+                  )
+                : icon,
             Text(
               count.toString(),
               style: textTheme.labelSmall?.copyWith(

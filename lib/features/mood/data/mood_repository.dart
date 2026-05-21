@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
@@ -86,6 +85,7 @@ class MoodRepository implements BaseRepository<Mood> {
       }
     } catch (e) {
       debugPrint("Mood sync failed: $e");
+      rethrow;
     }
   }
 
@@ -135,7 +135,7 @@ class MoodRepository implements BaseRepository<Mood> {
 
       final body = {
         "userId": userId,
-        "note": payload.note.isEmpty ? null : payload.note,
+        "note": payload.note,
         "value": payload.value,
       };
 
@@ -143,13 +143,31 @@ class MoodRepository implements BaseRepository<Mood> {
           .collection(PocketBaseCollections.moods)
           .create(body: body);
 
-      final mood = await Mood.fromRecordModel(record);
+      final mood = Mood.fromRecordModel(record);
 
       await _box.put(mood.id, mood);
 
       return mood;
     } catch (e) {
       debugPrint("Mood create failed: $e");
+      rethrow;
+    }
+  }
+
+  /// Deletes a mood record.
+  ///
+  /// This method:
+  /// - Sends delete request to PocketBase
+  /// - Deletes the model locally inside Hive
+  ///
+  /// This keeps local cache and remote state synchronized.
+  Future<void> delete(String id) async {
+    try {
+      await pb.collection(PocketBaseCollections.moods).delete(id);
+
+      await _box.delete(id);
+    } catch (e) {
+      debugPrint("Mood delete failed: $e");
       rethrow;
     }
   }
