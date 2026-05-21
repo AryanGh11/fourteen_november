@@ -1,16 +1,41 @@
-# fourteen_november
+# 💜 Fourteen November
 
-A new Flutter project.
+A private and emotional space built with Flutter.  
+`Fourteen November` is a relationship-focused app designed to save memories, moods, moments, and little pieces of life together.
 
-## Getting Started
+Built with love using Flutter + PocketBase.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## ✨ Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 🌙 Beautiful light & dark themes
+- 💭 Mood tracking system
+- 📸 Shared memories & posts
+- ❤️ Likes & interactions
+- 🌅 Animated dynamic backgrounds
+- ⚡ Offline-first caching support
+- 🔐 PocketBase backend integration
+- 🎨 Clean and soft modern UI
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 📱 Tech Stack
+
+- Flutter
+- Dart
+- PocketBase
+- Hive
+- GoRouter
+- Cached Network Image
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repo-url>
+cd fourteen_november
+```
