@@ -32,14 +32,12 @@ class _Tiles extends StatelessWidget {
         _Tile(
           title: "Stats",
           icon: LucideIcons.barChart2,
-          onTap: () => _navigateTo(context, RouteProvider.home),
-          disabled: true,
+          onTap: () => _navigateTo(context, RouteProvider.stats),
         ),
         _Tile(
           title: "Weather",
           icon: LucideIcons.cloudSun,
-          onTap: () => _navigateTo(context, RouteProvider.home),
-          disabled: true,
+          onTap: () => _navigateTo(context, RouteProvider.weather),
         ),
         _Tile(
           title: "Our Memories",
