@@ -53,13 +53,7 @@ class _TileContent extends StatelessWidget {
             spacing: 4,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                clipBehavior: Clip.hardEdge,
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(shape: BoxShape.circle),
-                child: CachedNetworkImage(imageUrl: mood.user.avatarUrl),
-              ),
+              CustomCircleAvatar(url: mood.user.avatarUrl),
               Text(mood.user.name, style: textTheme.labelSmall),
             ],
           ),

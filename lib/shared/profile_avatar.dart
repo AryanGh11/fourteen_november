@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fourteen_november/features/user/user.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fourteen_november/shared/custom_circle_avatar.dart';
 
 class ProfileAvatar extends StatelessWidget {
-  final double size;
-
-  const ProfileAvatar({super.key, this.size = 1});
+  const ProfileAvatar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +11,6 @@ class ProfileAvatar extends StatelessWidget {
 
     if (user == null) return const SizedBox.shrink();
 
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(shape: BoxShape.circle),
-      child: CachedNetworkImage(
-        imageUrl: user.avatarUrl,
-        width: size,
-        height: size,
-      ),
-    );
+    return CustomCircleAvatar(url: user.avatarUrl);
   }
 }

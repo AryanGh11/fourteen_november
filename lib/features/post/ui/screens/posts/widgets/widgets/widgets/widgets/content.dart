@@ -23,16 +23,7 @@ class _ContentState extends State<_Content> {
       child: Row(
         spacing: 8,
         children: [
-          Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: CustomCachedNetworkImage(
-              imageUrl: widget.post.user.avatarUrl,
-              width: 32,
-              height: 32,
-              fit: BoxFit.cover,
-            ),
-          ),
+          CustomCircleAvatar(url: widget.post.user.avatarUrl),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -53,7 +44,7 @@ class _ContentState extends State<_Content> {
               alignment: Alignment.center,
               iconSize: 14,
               onPressed: _delete,
-              icon: Icon(LucideIcons.trash2, color: colors.error,),
+              icon: Icon(LucideIcons.trash2, color: colors.error),
             ),
           ),
         ],

@@ -22,15 +22,7 @@ class _Tile extends StatelessWidget {
           child: Row(
             spacing: 12,
             children: [
-              Container(
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(shape: BoxShape.circle),
-                child: CustomCachedNetworkImage(
-                  imageUrl: user.avatarUrl,
-                  width: 48,
-                  height: 48,
-                ),
-              ),
+              CustomCircleAvatar(url: user.avatarUrl, size: 48),
               Text(user.name),
             ],
           ),
