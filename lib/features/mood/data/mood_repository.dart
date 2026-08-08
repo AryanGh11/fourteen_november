@@ -85,7 +85,7 @@ class MoodRepository implements BaseRepository<Mood> {
       }
     } catch (e) {
       debugPrint("Mood sync failed: $e");
-      rethrow;
+      return;
     }
   }
 
