@@ -38,8 +38,8 @@ class Background extends HiveObject {
     return Background(
       id: model.id,
       imagePath: imagePath,
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
+      created: DateTime.parse(model.get("created")).toLocal(),
+      updated: DateTime.parse(model.get("updated")).toLocal(),
       imageUrl: url,
     );
   }
