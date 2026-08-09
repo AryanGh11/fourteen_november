@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
 
 class DefaultAppBar extends AppBar {
   DefaultAppBar({
@@ -36,12 +35,4 @@ class DefaultAppBar extends AppBar {
     super.clipBehavior,
     super.actionsPadding,
   });
-
-  @override
-  Widget? get title {
-    return GestureDetector(
-      onTap: PocketBaseService.pasteUrl,
-      child: super.title,
-    );
-  }
 }

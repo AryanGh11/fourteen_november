@@ -1,19 +1,18 @@
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'package:appwrite/appwrite.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 import 'package:fourteen_november/core/base_repository/base_repository.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_collections.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_constants.dart';
 
 /// Repository responsible for managing cached [Post] data.
 ///
 /// This repository follows an offline-first architecture:
 /// - Hive is used as the primary local data source.
-/// - PocketBase is used as the remote source of truth.
+/// - Appwrite is used as the remote source of truth.
 /// - UI reads data directly from local cache for fast and stable rendering.
 /// - Remote synchronization happens manually through refresh methods.
 ///
@@ -23,9 +22,11 @@ import 'package:fourteen_november/services/pocket_base/pocket_base_collections.d
 /// - Manual remote refresh support
 /// - Persistent offline access
 class PostRepository implements BaseRepository<Post> {
-  @override
-  /// PocketBase instance used for remote requests.
-  PocketBase get pb => PocketBaseService.I.instance;
+  /// Appwrite tables API used for remote requests.
+  TablesDB get db => AppwriteService.I.tablesDB;
+
+  /// Appwrite storage API used for file uploads.
+  Storage get files => AppwriteService.I.storage;
 
   /// Local Hive box containing cached [Post] models.
   static Box<Post> get _box => Hive.box<Post>(HiveService.postsBoxKey);
@@ -64,7 +65,7 @@ class PostRepository implements BaseRepository<Post> {
   }
 
   @override
-  /// Performs the initial synchronization with PocketBase.
+  /// Performs the initial synchronization with Appwrite.
   ///
   /// This method only fetches remote data when the local cache
   /// is empty. It is mainly intended to run during app startup
@@ -75,11 +76,9 @@ class PostRepository implements BaseRepository<Post> {
     try {
       if (_box.isNotEmpty) return;
 
-      final records = await pb
-          .collection(PocketBaseCollections.posts)
-          .getFullList();
+      final rows = await AppwriteService.listAllRows(AppwriteTables.posts);
 
-      final posts = records.map((e) => Post.fromRecordModel(e)).toList();
+      final posts = rows.map((e) => Post.fromRow(e)).toList();
 
       for (final item in posts) {
         await _box.put(item.id, item);
@@ -94,18 +93,16 @@ class PostRepository implements BaseRepository<Post> {
   /// Fully refreshes local cache using the latest remote data.
   ///
   /// This method:
-  /// - Fetches all records from PocketBase
+  /// - Fetches all records from Appwrite
   /// - Clears existing local cache
   /// - Replaces cache with fresh remote data
   ///
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final records = await pb
-          .collection(PocketBaseCollections.posts)
-          .getFullList();
+      final rows = await AppwriteService.listAllRows(AppwriteTables.posts);
 
-      final posts = records.map((e) => Post.fromRecordModel(e)).toList();
+      final posts = rows.map((e) => Post.fromRow(e)).toList();
 
       await _box.clear();
 
@@ -121,7 +118,7 @@ class PostRepository implements BaseRepository<Post> {
   /// Creates a new post record.
   ///
   /// This method:
-  /// - Sends create request to PocketBase
+  /// - Sends create request to Appwrite
   /// - Converts response into a [Post] model
   /// - Stores the model locally inside Hive
   /// - Returns the cached instance
@@ -135,23 +132,28 @@ class PostRepository implements BaseRepository<Post> {
         throw ArgumentError("User not found");
       }
 
-      final attachment = await http.MultipartFile.fromPath(
-        'attachment',
-        payload.attachmentPath,
+      // The attachment is uploaded first: storage and rows are separate in
+      // Appwrite, so the row stores the resulting file id.
+      final file = await files.createFile(
+        bucketId: AppwriteConstants.mediaBucketId,
+        fileId: ID.unique(),
+        file: InputFile.fromPath(path: payload.attachmentPath),
       );
 
-      final body = {
-        "userId": userId,
-        "description": payload.description,
-        "commentsIds": [],
-        "likesBy": [],
-      };
+      final row = await db.createRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.posts,
+        rowId: ID.unique(),
+        data: {
+          "userId": userId,
+          "description": payload.description,
+          "attachmentId": file.$id,
+          "commentsIds": <String>[],
+          "likesBy": <String>[],
+        },
+      );
 
-      final record = await pb
-          .collection(PocketBaseCollections.posts)
-          .create(body: body, files: [attachment]);
-
-      final post = Post.fromRecordModel(record);
+      final post = Post.fromRow(row);
 
       await _box.put(post.id, post);
 
@@ -165,13 +167,33 @@ class PostRepository implements BaseRepository<Post> {
   /// Deletes a post record.
   ///
   /// This method:
-  /// - Sends delete request to PocketBase
+  /// - Sends delete request to Appwrite
   /// - Deletes the model locally inside Hive
   ///
   /// This keeps local cache and remote state synchronized.
   Future<void> delete(String id) async {
     try {
-      await pb.collection(PocketBaseCollections.posts).delete(id);
+      final post = getOne(id);
+
+      await db.deleteRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.posts,
+        rowId: id,
+      );
+
+      // Storage is not tied to rows the way PocketBase file fields were, so the
+      // attachment has to be removed explicitly or it is orphaned in the bucket.
+      final attachmentId = post?.attachmentPath ?? '';
+      if (attachmentId.isNotEmpty) {
+        try {
+          await files.deleteFile(
+            bucketId: AppwriteConstants.mediaBucketId,
+            fileId: attachmentId,
+          );
+        } catch (e) {
+          debugPrint("Post attachment delete failed: $e");
+        }
+      }
 
       await _box.delete(id);
     } catch (e) {
@@ -186,14 +208,14 @@ class PostRepository implements BaseRepository<Post> {
   /// - Reads the cached post locally
   /// - Checks whether current user already liked the post
   /// - Adds or removes the user from `likesBy`
-  /// - Updates PocketBase record
+  /// - Updates Appwrite record
   /// - Replaces local cached post with fresh remote data
   ///
   /// Returns the updated [Post] instance.
   ///
   /// Throws:
   /// - [ArgumentError] if user or post is missing
-  /// - Any PocketBase/network related exception
+  /// - Any Appwrite/network related exception
   Future<Post> toggleLike(String postId) async {
     try {
       final currentPost = getOne(postId);
@@ -214,11 +236,14 @@ class PostRepository implements BaseRepository<Post> {
         likesBy.add(currentUserId);
       }
 
-      final record = await pb
-          .collection(PocketBaseCollections.posts)
-          .update(postId, body: {"likesBy": likesBy});
+      final row = await db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.posts,
+        rowId: postId,
+        data: {"likesBy": likesBy},
+      );
 
-      final updatedPost = Post.fromRecordModel(record);
+      final updatedPost = Post.fromRow(row);
 
       /// Update local cache with latest remote state.
       await _box.put(updatedPost.id, updatedPost);

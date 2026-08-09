@@ -1,6 +1,8 @@
-import 'package:pocketbase/pocketbase.dart';
+// Prefixed: appwrite's models export `User` and `Row`, which collide with
+// this app's User model and Flutter's Row widget.
+import 'package:appwrite/models.dart' as models;
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
 
 part 'user_model.g.dart';
 
@@ -57,25 +59,27 @@ class User extends HiveObject {
     required this.locationLng,
   });
 
-  factory User.fromRecordModel(RecordModel model) {
-    final pb = PocketBaseService.I.instance;
+  factory User.fromRow(models.Row row) {
+    final data = row.data;
 
-    final avatarPath = model.getStringValue("avatar");
-    final url = pb.files.getURL(model, avatarPath).toString();
+    // Holds the Appwrite storage file id, which the view url is built from.
+    final avatarPath = (data["avatarId"] as String?) ?? '';
 
     return User(
-      id: model.id,
-      name: model.getStringValue("name"),
+      id: row.$id,
+      name: (data["name"] as String?) ?? '',
       avatarPath: avatarPath,
-      email: model.getStringValue("email"),
-      emailVisibility: model.getBoolValue("emailVisibility"),
-      verified: model.getBoolValue("verified"),
-      created: DateTime.parse(model.get("created")).toLocal(),
-      updated: DateTime.parse(model.get("updated")).toLocal(),
-      avatarUrl: url,
-      cityName: model.getStringValue("cityName"),
-      locationLat: model.getDoubleValue("locationLat"),
-      locationLng: model.getDoubleValue("locationLng"),
+      email: (data["email"] as String?) ?? '',
+      // Not stored remotely: the app has no login, so these were always
+      // constant. Kept on the model so the Hive adapter stays unchanged.
+      emailVisibility: true,
+      verified: true,
+      created: DateTime.parse(row.$createdAt).toLocal(),
+      updated: DateTime.parse(row.$updatedAt).toLocal(),
+      avatarUrl: AppwriteService.fileUrl(avatarPath),
+      cityName: (data["cityName"] as String?) ?? '',
+      locationLat: (data["locationLat"] as num?)?.toDouble() ?? 0,
+      locationLng: (data["locationLng"] as num?)?.toDouble() ?? 0,
     );
   }
 }

@@ -1,4 +1,6 @@
-import 'package:pocketbase/pocketbase.dart';
+// Prefixed: appwrite's models export `User` and `Row`, which collide with
+// this app's User model and Flutter's Row widget.
+import 'package:appwrite/models.dart' as models;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/user/user.dart';
@@ -34,14 +36,16 @@ class Comment extends HiveObject {
     required this.updated,
   });
 
-  factory Comment.fromRecordModel(RecordModel model) {
+  factory Comment.fromRow(models.Row row) {
+    final data = row.data;
+
     return Comment(
-      id: model.id,
-      userId: model.getStringValue("userId"),
-      postId: model.getStringValue("postId"),
-      body: model.getStringValue("body"),
-      created: DateTime.parse(model.get("created")).toLocal(),
-      updated: DateTime.parse(model.get("updated")).toLocal(),
+      id: row.$id,
+      userId: (data["userId"] as String?) ?? '',
+      postId: (data["postId"] as String?) ?? '',
+      body: (data["body"] as String?) ?? '',
+      created: DateTime.parse(row.$createdAt).toLocal(),
+      updated: DateTime.parse(row.$updatedAt).toLocal(),
     );
   }
 
