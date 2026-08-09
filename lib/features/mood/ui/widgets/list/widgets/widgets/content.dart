@@ -10,10 +10,6 @@ class _TileContent extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final formattedCreatedAt = intl.DateFormat(
-      'dd MMM yyyy, HH:mm',
-    ).format(mood.created);
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -45,7 +41,7 @@ class _TileContent extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  formattedCreatedAt,
+                  DateFormatter.format(date: mood.created),
                   style: textTheme.labelSmall,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

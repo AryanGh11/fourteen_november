@@ -10,7 +10,12 @@ class _List extends StatelessWidget {
     return ListView.separated(
       itemBuilder: (context, index) {
         final post = posts[index];
-        return _Post(post: post);
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: posts.length == (index + 1) ? 60 : 0,
+          ),
+          child: _Post(post: post),
+        );
       },
       separatorBuilder: (_, __) => SizedBox(height: 30),
       itemCount: posts.length,

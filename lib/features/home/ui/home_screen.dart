@@ -5,6 +5,7 @@ import 'package:fourteen_november/theme/dark_theme.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
 import 'package:fourteen_november/shared/app_messenger.dart';
+import 'package:fourteen_november/shared/profile_avatar.dart';
 import 'package:fourteen_november/shared/default_app_bar.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 import 'package:fourteen_november/shared/loading_icon_button.dart';
@@ -42,6 +43,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: DefaultAppBar(
+        leading: Padding(
+          padding: EdgeInsets.only(left: 20),
+          child: ProfileAvatar(),
+        ),
         title: Text("14 November 💕"),
         foregroundColor: Colors.white,
         actions: [

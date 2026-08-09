@@ -162,6 +162,24 @@ class PostRepository implements BaseRepository<Post> {
     }
   }
 
+  /// Deletes a post record.
+  ///
+  /// This method:
+  /// - Sends delete request to PocketBase
+  /// - Deletes the model locally inside Hive
+  ///
+  /// This keeps local cache and remote state synchronized.
+  Future<void> delete(String id) async {
+    try {
+      await pb.collection(PocketBaseCollections.posts).delete(id);
+
+      await _box.delete(id);
+    } catch (e) {
+      debugPrint("Post delete failed: $e");
+      rethrow;
+    }
+  }
+
   /// Toggles like state for a post.
   ///
   /// This method:
