@@ -76,12 +76,9 @@ class MoodRepository implements BaseRepository<Mood> {
     try {
       if (_box.isNotEmpty) return;
 
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.moods,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.moods);
 
-      final moods = result.rows.map((e) => Mood.fromRow(e)).toList();
+      final moods = rows.map((e) => Mood.fromRow(e)).toList();
 
       for (final item in moods) {
         await _box.put(item.id, item);
@@ -103,12 +100,9 @@ class MoodRepository implements BaseRepository<Mood> {
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.moods,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.moods);
 
-      final moods = result.rows.map((e) => Mood.fromRow(e)).toList();
+      final moods = rows.map((e) => Mood.fromRow(e)).toList();
 
       await _box.clear();
 

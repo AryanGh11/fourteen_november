@@ -75,12 +75,9 @@ class CommentRepository implements BaseRepository<Comment> {
     try {
       if (_box.isNotEmpty) return;
 
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.comments,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.comments);
 
-      final List<Comment> comments = result.rows
+      final List<Comment> comments = rows
           .map((e) => Comment.fromRow(e))
           .toList();
 
@@ -104,12 +101,9 @@ class CommentRepository implements BaseRepository<Comment> {
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.comments,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.comments);
 
-      final List<Comment> comments = result.rows
+      final List<Comment> comments = rows
           .map((e) => Comment.fromRow(e))
           .toList();
 

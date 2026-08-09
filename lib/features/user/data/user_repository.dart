@@ -72,12 +72,9 @@ class UserRepository implements BaseRepository<User> {
     try {
       if (_box.isNotEmpty) return;
 
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.users,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.users);
 
-      final users = result.rows.map((e) => User.fromRow(e)).toList();
+      final users = rows.map((e) => User.fromRow(e)).toList();
 
       for (final item in users) {
         await _box.put(item.id, item);
@@ -99,12 +96,9 @@ class UserRepository implements BaseRepository<User> {
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.users,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.users);
 
-      final users = result.rows.map((e) => User.fromRow(e)).toList();
+      final users = rows.map((e) => User.fromRow(e)).toList();
 
       await _box.clear();
 

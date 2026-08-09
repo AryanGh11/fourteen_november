@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart' as models;
 import 'package:fourteen_november/services/appwrite/appwrite_constants.dart';
 
 /// Singleton wrapper around the Appwrite client.
@@ -38,6 +39,43 @@ class AppwriteService {
     }
 
     return _instance!;
+  }
+
+  /// Rows fetched per request while paging. Appwrite's own maximum.
+  static const int _pageSize = 100;
+
+  /// Fetches every row of a table, following pagination to the end.
+  ///
+  /// `listRows` returns only the first 25 rows unless told otherwise, so
+  /// calling it directly silently truncates any table that outgrows a single
+  /// page - records exist remotely but never reach the local cache. This is
+  /// the equivalent of PocketBase's `getFullList()`, which paged internally.
+  ///
+  /// Cursor paging is used rather than offsets so that rows created while the
+  /// sync is running cannot shift the window and cause skips or duplicates.
+  static Future<List<models.Row>> listAllRows(String tableId) async {
+    final rows = <models.Row>[];
+
+    String? cursor;
+
+    while (true) {
+      final page = await I.tablesDB.listRows(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: tableId,
+        queries: [
+          Query.limit(_pageSize),
+          if (cursor != null) Query.cursorAfter(cursor),
+        ],
+      );
+
+      rows.addAll(page.rows);
+
+      if (page.rows.length < _pageSize) break;
+
+      cursor = page.rows.last.$id;
+    }
+
+    return rows;
   }
 
   /// Builds a publicly viewable url for a stored file.

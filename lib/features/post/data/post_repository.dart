@@ -76,12 +76,9 @@ class PostRepository implements BaseRepository<Post> {
     try {
       if (_box.isNotEmpty) return;
 
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.posts,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.posts);
 
-      final posts = result.rows.map((e) => Post.fromRow(e)).toList();
+      final posts = rows.map((e) => Post.fromRow(e)).toList();
 
       for (final item in posts) {
         await _box.put(item.id, item);
@@ -103,12 +100,9 @@ class PostRepository implements BaseRepository<Post> {
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.posts,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.posts);
 
-      final posts = result.rows.map((e) => Post.fromRow(e)).toList();
+      final posts = rows.map((e) => Post.fromRow(e)).toList();
 
       await _box.clear();
 

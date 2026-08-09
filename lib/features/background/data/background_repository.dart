@@ -76,12 +76,9 @@ class BackgroundRepository implements BaseRepository<Background> {
     try {
       if (_box.isNotEmpty) return;
 
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.backgrounds,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.backgrounds);
 
-      final backgrounds = result.rows
+      final backgrounds = rows
           .map((e) => Background.fromRow(e))
           .toList();
 
@@ -105,12 +102,9 @@ class BackgroundRepository implements BaseRepository<Background> {
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final result = await db.listRows(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteTables.backgrounds,
-      );
+      final rows = await AppwriteService.listAllRows(AppwriteTables.backgrounds);
 
-      final backgrounds = result.rows
+      final backgrounds = rows
           .map((e) => Background.fromRow(e))
           .toList();
 
