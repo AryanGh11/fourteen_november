@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'package:appwrite/appwrite.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 import 'package:fourteen_november/core/base_repository/base_repository.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_collections.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_constants.dart';
 
 /// Repository responsible for managing cached [Comment] data.
 ///
 /// This repository follows an offline-first architecture:
 /// - Hive is used as the primary local data source.
-/// - PocketBase is used as the remote source of truth.
+/// - Appwrite is used as the remote source of truth.
 /// - UI reads data directly from local cache for fast and stable rendering.
 /// - Remote synchronization happens manually through refresh methods.
 ///
@@ -21,9 +21,11 @@ import 'package:fourteen_november/services/pocket_base/pocket_base_collections.d
 /// - Manual remote refresh support
 /// - Persistent offline access
 class CommentRepository implements BaseRepository<Comment> {
-  /// PocketBase instance used for remote requests.
-  // TODO: migrate to Appwrite (AppwriteService.I.tablesDB)
-  PocketBase get pb => PocketBaseService.I.instance;
+  /// Appwrite tables API used for remote requests.
+  TablesDB get db => AppwriteService.I.tablesDB;
+
+  /// Appwrite storage API used for file uploads.
+  Storage get files => AppwriteService.I.storage;
 
   /// Local Hive box containing cached [Comment] models.
   static Box<Comment> get _box => Hive.box<Comment>(HiveService.commentsBoxKey);
@@ -62,7 +64,7 @@ class CommentRepository implements BaseRepository<Comment> {
   }
 
   @override
-  /// Performs the initial synchronization with PocketBase.
+  /// Performs the initial synchronization with Appwrite.
   ///
   /// This method only fetches remote data when the local cache
   /// is empty. It is mainly intended to run during app startup
@@ -73,12 +75,13 @@ class CommentRepository implements BaseRepository<Comment> {
     try {
       if (_box.isNotEmpty) return;
 
-      final records = await pb
-          .collection(PocketBaseCollections.comments)
-          .getFullList();
+      final result = await db.listRows(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.comments,
+      );
 
-      final List<Comment> comments = records
-          .map((e) => Comment.fromRecordModel(e))
+      final List<Comment> comments = result.rows
+          .map((e) => Comment.fromRow(e))
           .toList();
 
       for (final item in comments) {
@@ -94,19 +97,20 @@ class CommentRepository implements BaseRepository<Comment> {
   /// Fully refreshes local cache using the latest remote data.
   ///
   /// This method:
-  /// - Fetches all records from PocketBase
+  /// - Fetches all records from Appwrite
   /// - Clears existing local cache
   /// - Replaces cache with fresh remote data
   ///
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final records = await pb
-          .collection(PocketBaseCollections.comments)
-          .getFullList();
+      final result = await db.listRows(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.comments,
+      );
 
-      final List<Comment> comments = records
-          .map((e) => Comment.fromRecordModel(e))
+      final List<Comment> comments = result.rows
+          .map((e) => Comment.fromRow(e))
           .toList();
 
       await _box.clear();

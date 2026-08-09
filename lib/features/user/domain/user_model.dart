@@ -1,4 +1,6 @@
-import 'package:appwrite/models.dart';
+// Prefixed: appwrite's models export `User` and `Row`, which collide with
+// this app's User model and Flutter's Row widget.
+import 'package:appwrite/models.dart' as models;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
 
@@ -57,7 +59,7 @@ class User extends HiveObject {
     required this.locationLng,
   });
 
-  factory User.fromRow(Row row) {
+  factory User.fromRow(models.Row row) {
     final data = row.data;
 
     // Holds the Appwrite storage file id, which the view url is built from.
