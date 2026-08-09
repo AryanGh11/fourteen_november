@@ -1,17 +1,20 @@
 import 'package:flutter/foundation.dart';
-import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Base contract for all offline-first repositories.
 ///
 /// Repositories implementing this interface are responsible for:
 /// - Managing local cached data
-/// - Communicating with PocketBase
+/// - Communicating with the remote backend
 /// - Providing synchronous local reads
 /// - Handling remote synchronization and refresh operations
 ///
+/// The remote client is deliberately not part of this contract: which backend
+/// a repository talks to is an implementation detail, so swapping it does not
+/// change the interface the UI depends on.
+///
 /// Architecture flow:
-/// PocketBase (remote source of truth)
+/// Remote backend (source of truth)
 ///        ↓
 /// Repository sync/refresh
 ///        ↓
@@ -19,9 +22,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 ///        ↓
 /// UI reads from local storage
 abstract class BaseRepository<T> {
-  /// PocketBase instance used for remote API requests.
-  abstract final PocketBase pb;
-
   /// Returns all locally cached models.
   ///
   /// This method should not perform network requests.

@@ -7,7 +7,9 @@ plugins {
 
 android {
     namespace = "com.aryan_dev.fourteen_november"
-    compileSdk = flutter.compileSdkVersion
+    // Pinned above flutter.compileSdkVersion (35): the appwrite SDK pulls in
+    // flutter_web_auth_2, whose androidx.browser dependency requires 36.
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {

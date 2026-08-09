@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fourteen_november/features/user/user.dart';
-import 'package:fourteen_november/shared/custom_cached_network_image.dart';
+import 'package:fourteen_november/shared/custom_circle_avatar.dart';
 
 part 'widgets/list/list.dart';
 part 'widgets/list/widgets/tile.dart';

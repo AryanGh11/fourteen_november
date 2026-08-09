@@ -10,10 +10,6 @@ class _TileContent extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final formattedCreatedAt = intl.DateFormat(
-      'dd MMM yyyy, HH:mm',
-    ).format(mood.created);
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -45,7 +41,7 @@ class _TileContent extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  formattedCreatedAt,
+                  DateFormatter.format(date: mood.created),
                   style: textTheme.labelSmall,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -57,13 +53,7 @@ class _TileContent extends StatelessWidget {
             spacing: 4,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                clipBehavior: Clip.hardEdge,
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(shape: BoxShape.circle),
-                child: CachedNetworkImage(imageUrl: mood.user.avatarUrl),
-              ),
+              CustomCircleAvatar(url: mood.user.avatarUrl),
               Text(mood.user.name, style: textTheme.labelSmall),
             ],
           ),

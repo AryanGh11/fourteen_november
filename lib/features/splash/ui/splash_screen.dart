@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -94,24 +93,6 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 );
               },
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 40),
-              child: GestureDetector(
-                onTap: PocketBaseService.pasteUrl,
-                child: Text(
-                  "Having trouble? Paste new api endpoint here.".toUpperCase(),
-                  textAlign: TextAlign.center,
-                  style: textTheme.labelSmall?.copyWith(
-                    color: colors.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ),
             ),
           ),
         ],

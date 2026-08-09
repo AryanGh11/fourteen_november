@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fourteen_november/theme/app_colors.dart';
-import 'package:pocketbase/pocketbase.dart';
+// Prefixed: appwrite's models export `User` and `Row`, which collide with
+// this app's User model and Flutter's Row widget.
+import 'package:appwrite/models.dart' as models;
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
@@ -36,14 +38,16 @@ class Mood extends HiveObject {
     required this.updated,
   });
 
-  factory Mood.fromRecordModel(RecordModel model) {
+  factory Mood.fromRow(models.Row row) {
+    final data = row.data;
+
     return Mood(
-      id: model.id,
-      userId: model.getStringValue("userId"),
-      value: model.getIntValue("value"),
-      note: model.get("note"),
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
+      id: row.$id,
+      userId: (data["userId"] as String?) ?? '',
+      value: (data["value"] as num?)?.toInt() ?? 0,
+      note: data["note"] as String?,
+      created: DateTime.parse(row.$createdAt).toLocal(),
+      updated: DateTime.parse(row.$updatedAt).toLocal(),
     );
   }
 

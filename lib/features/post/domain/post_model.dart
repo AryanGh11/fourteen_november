@@ -1,8 +1,10 @@
-import 'package:pocketbase/pocketbase.dart';
+// Prefixed: appwrite's models export `User` and `Row`, which collide with
+// this app's User model and Flutter's Row widget.
+import 'package:appwrite/models.dart' as models;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
 
 part 'post_model.g.dart';
 
@@ -47,24 +49,29 @@ class Post extends HiveObject {
     required this.attachmentUrl,
   });
 
-  factory Post.fromRecordModel(RecordModel model) {
-    final pb = PocketBaseService.I.instance;
+  factory Post.fromRow(models.Row row) {
+    final data = row.data;
 
-    final attachmentPath = model.getStringValue("attachment");
-
-    final url = pb.files.getURL(model, attachmentPath).toString();
+    // Holds the Appwrite storage file id, which the view url is built from.
+    final attachmentPath = (data["attachmentId"] as String?) ?? '';
 
     return Post(
-      id: model.id,
-      userId: model.getStringValue("userId"),
-      attachmentPath: model.getStringValue("attachment"),
-      description: model.getStringValue("description"),
-      likesBy: model.getListValue("likesBy"),
-      commentsIds: model.getListValue("commentsIds"),
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
-      attachmentUrl: url,
+      id: row.$id,
+      userId: (data["userId"] as String?) ?? '',
+      attachmentPath: attachmentPath,
+      description: (data["description"] as String?) ?? '',
+      likesBy: _stringList(data["likesBy"]),
+      commentsIds: _stringList(data["commentsIds"]),
+      created: DateTime.parse(row.$createdAt).toLocal(),
+      updated: DateTime.parse(row.$updatedAt).toLocal(),
+      attachmentUrl: AppwriteService.fileUrl(attachmentPath),
     );
+  }
+
+  /// Appwrite returns array columns as `List<dynamic>`.
+  static List<String> _stringList(dynamic value) {
+    if (value is! List) return const [];
+    return value.map((e) => e.toString()).toList();
   }
 
   List<Comment> get comments {

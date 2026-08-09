@@ -1,6 +1,8 @@
-import 'package:pocketbase/pocketbase.dart';
+// Prefixed: appwrite's models export `User` and `Row`, which collide with
+// this app's User model and Flutter's Row widget.
+import 'package:appwrite/models.dart' as models;
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
 
 part 'background_model.g.dart';
 
@@ -29,18 +31,16 @@ class Background extends HiveObject {
     required this.imageUrl,
   });
 
-  factory Background.fromRecordModel(RecordModel model) {
-    final pb = PocketBaseService.I.instance;
-
-    final imagePath = model.getStringValue("image");
-    final url = pb.files.getURL(model, imagePath).toString();
+  factory Background.fromRow(models.Row row) {
+    // Holds the Appwrite storage file id, which the view url is built from.
+    final imagePath = (row.data["imageId"] as String?) ?? '';
 
     return Background(
-      id: model.id,
+      id: row.$id,
       imagePath: imagePath,
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
-      imageUrl: url,
+      created: DateTime.parse(row.$createdAt).toLocal(),
+      updated: DateTime.parse(row.$updatedAt).toLocal(),
+      imageUrl: AppwriteService.fileUrl(imagePath),
     );
   }
 }

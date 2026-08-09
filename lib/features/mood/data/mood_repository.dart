@@ -1,18 +1,18 @@
 import 'package:flutter/foundation.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'package:appwrite/appwrite.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/features/mood/mood.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 import 'package:fourteen_november/core/base_repository/base_repository.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_collections.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_constants.dart';
 
 /// Repository responsible for managing cached [Mood] data.
 ///
 /// This repository follows an offline-first architecture:
 /// - Hive is used as the primary local data source.
-/// - PocketBase is used as the remote source of truth.
+/// - Appwrite is used as the remote source of truth.
 /// - UI reads data directly from local cache for fast and stable rendering.
 /// - Remote synchronization happens manually through refresh methods.
 ///
@@ -22,9 +22,11 @@ import 'package:fourteen_november/services/pocket_base/pocket_base_collections.d
 /// - Manual remote refresh support
 /// - Persistent offline access
 class MoodRepository implements BaseRepository<Mood> {
-  @override
-  /// PocketBase instance used for remote requests.
-  PocketBase get pb => PocketBaseService.I.instance;
+  /// Appwrite tables API used for remote requests.
+  TablesDB get db => AppwriteService.I.tablesDB;
+
+  /// Appwrite storage API used for file uploads.
+  Storage get files => AppwriteService.I.storage;
 
   /// Local Hive box containing cached [Mood] models.
   static Box<Mood> get _box => Hive.box<Mood>(HiveService.moodsBoxKey);
@@ -63,7 +65,7 @@ class MoodRepository implements BaseRepository<Mood> {
   }
 
   @override
-  /// Performs the initial synchronization with PocketBase.
+  /// Performs the initial synchronization with Appwrite.
   ///
   /// This method only fetches remote data when the local cache
   /// is empty. It is mainly intended to run during app startup
@@ -74,18 +76,16 @@ class MoodRepository implements BaseRepository<Mood> {
     try {
       if (_box.isNotEmpty) return;
 
-      final records = await pb
-          .collection(PocketBaseCollections.moods)
-          .getFullList();
+      final rows = await AppwriteService.listAllRows(AppwriteTables.moods);
 
-      final moods = records.map((e) => Mood.fromRecordModel(e)).toList();
+      final moods = rows.map((e) => Mood.fromRow(e)).toList();
 
       for (final item in moods) {
         await _box.put(item.id, item);
       }
     } catch (e) {
       debugPrint("Mood sync failed: $e");
-      rethrow;
+      return;
     }
   }
 
@@ -93,18 +93,16 @@ class MoodRepository implements BaseRepository<Mood> {
   /// Fully refreshes local cache using the latest remote data.
   ///
   /// This method:
-  /// - Fetches all records from PocketBase
+  /// - Fetches all records from Appwrite
   /// - Clears existing local cache
   /// - Replaces cache with fresh remote data
   ///
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final records = await pb
-          .collection(PocketBaseCollections.moods)
-          .getFullList();
+      final rows = await AppwriteService.listAllRows(AppwriteTables.moods);
 
-      final moods = records.map((e) => Mood.fromRecordModel(e)).toList();
+      final moods = rows.map((e) => Mood.fromRow(e)).toList();
 
       await _box.clear();
 
@@ -119,7 +117,7 @@ class MoodRepository implements BaseRepository<Mood> {
   /// Creates a new mood record.
   ///
   /// This method:
-  /// - Sends create request to PocketBase
+  /// - Sends create request to Appwrite
   /// - Converts response into a [Mood] model
   /// - Stores the model locally inside Hive
   /// - Returns the cached instance
@@ -133,17 +131,18 @@ class MoodRepository implements BaseRepository<Mood> {
         throw ArgumentError("User not found");
       }
 
-      final body = {
-        "userId": userId,
-        "note": payload.note,
-        "value": payload.value,
-      };
+      final row = await db.createRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.moods,
+        rowId: ID.unique(),
+        data: {
+          "userId": userId,
+          "note": payload.note,
+          "value": payload.value,
+        },
+      );
 
-      final record = await pb
-          .collection(PocketBaseCollections.moods)
-          .create(body: body);
-
-      final mood = Mood.fromRecordModel(record);
+      final mood = Mood.fromRow(row);
 
       await _box.put(mood.id, mood);
 
@@ -157,13 +156,17 @@ class MoodRepository implements BaseRepository<Mood> {
   /// Deletes a mood record.
   ///
   /// This method:
-  /// - Sends delete request to PocketBase
+  /// - Sends delete request to Appwrite
   /// - Deletes the model locally inside Hive
   ///
   /// This keeps local cache and remote state synchronized.
   Future<void> delete(String id) async {
     try {
-      await pb.collection(PocketBaseCollections.moods).delete(id);
+      await db.deleteRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.moods,
+        rowId: id,
+      );
 
       await _box.delete(id);
     } catch (e) {

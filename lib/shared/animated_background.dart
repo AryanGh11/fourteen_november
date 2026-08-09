@@ -37,10 +37,15 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
     _timer = Timer.periodic(const Duration(seconds: 10), (_) {
       if (!mounted) return;
 
+      // Checked every tick rather than once at startup: the list is empty
+      // until the backgrounds finish syncing, and cycling needs two images.
+      final count = widget.images.length;
+      if (count < 2) return;
+
       setState(() {
         _currentIndex = _nextIndex;
 
-        _nextIndex = (_nextIndex + 1) % widget.images.length;
+        _nextIndex = (_nextIndex + 1) % count;
       });
 
       _controller
@@ -59,9 +64,16 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.images.isEmpty) {
+    final count = widget.images.length;
+
+    if (count == 0) {
       return const SizedBox.shrink();
     }
+
+    // Wrapped rather than used raw: with a single image both indices must
+    // collapse onto it, otherwise the next-image slot reads out of range.
+    final currentIndex = _currentIndex % count;
+    final nextIndex = _nextIndex % count;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -86,7 +98,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
             Transform.scale(
               scale: currentScale,
               child: CustomCachedNetworkImage(
-                imageUrl: widget.images[_currentIndex],
+                imageUrl: widget.images[currentIndex],
                 fit: BoxFit.cover,
               ),
             ),
@@ -97,7 +109,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
               child: Transform.scale(
                 scale: nextScale,
                 child: CustomCachedNetworkImage(
-                  imageUrl: widget.images[_nextIndex],
+                  imageUrl: widget.images[nextIndex],
                   fit: BoxFit.cover,
                 ),
               ),
