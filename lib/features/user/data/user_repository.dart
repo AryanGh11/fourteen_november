@@ -84,7 +84,7 @@ class UserRepository implements BaseRepository<User> {
       }
     } catch (e) {
       debugPrint("User sync failed: $e");
-      rethrow;
+      return;
     }
   }
 

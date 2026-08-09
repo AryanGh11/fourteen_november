@@ -4,5 +4,5 @@ class DateFormatter {
   static String format({
     required DateTime date,
     String pattern = 'dd MMM yyyy, HH:mm',
-  }) => intl.DateFormat(pattern).format(date.toLocal());
+  }) => intl.DateFormat(pattern).format(date);
 }

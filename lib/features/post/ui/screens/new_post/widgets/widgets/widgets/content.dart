@@ -16,16 +16,7 @@ class _Content extends StatelessWidget {
       child: Row(
         spacing: 8,
         children: [
-          Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: CustomCachedNetworkImage(
-              imageUrl: user.avatarUrl,
-              width: 32,
-              height: 32,
-              fit: BoxFit.cover,
-            ),
-          ),
+          CustomCircleAvatar(url: user.avatarUrl, size: 32),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

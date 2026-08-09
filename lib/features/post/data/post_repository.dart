@@ -86,7 +86,7 @@ class PostRepository implements BaseRepository<Post> {
       }
     } catch (e) {
       debugPrint("Post sync failed: $e");
-      rethrow;
+      return;
     }
   }
 

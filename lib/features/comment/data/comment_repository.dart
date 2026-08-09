@@ -86,7 +86,7 @@ class CommentRepository implements BaseRepository<Comment> {
       }
     } catch (e) {
       debugPrint("Comment sync failed: $e");
-      rethrow;
+      return;
     }
   }
 

@@ -61,8 +61,8 @@ class Post extends HiveObject {
       description: model.getStringValue("description"),
       likesBy: model.getListValue("likesBy"),
       commentsIds: model.getListValue("commentsIds"),
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
+      created: DateTime.parse(model.get("created")).toLocal(),
+      updated: DateTime.parse(model.get("updated")).toLocal(),
       attachmentUrl: url,
     );
   }

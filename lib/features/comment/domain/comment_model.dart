@@ -40,8 +40,8 @@ class Comment extends HiveObject {
       userId: model.getStringValue("userId"),
       postId: model.getStringValue("postId"),
       body: model.getStringValue("body"),
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
+      created: DateTime.parse(model.get("created")).toLocal(),
+      updated: DateTime.parse(model.get("updated")).toLocal(),
     );
   }
 

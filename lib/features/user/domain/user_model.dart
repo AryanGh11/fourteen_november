@@ -33,6 +33,15 @@ class User extends HiveObject {
   @HiveField(8)
   final String avatarUrl;
 
+  @HiveField(9, defaultValue: '')
+  final String cityName;
+
+  @HiveField(10, defaultValue: 0)
+  final double locationLat;
+
+  @HiveField(11, defaultValue: 0)
+  final double locationLng;
+
   User({
     required this.id,
     required this.name,
@@ -43,6 +52,9 @@ class User extends HiveObject {
     required this.created,
     required this.updated,
     required this.avatarUrl,
+    required this.cityName,
+    required this.locationLat,
+    required this.locationLng,
   });
 
   factory User.fromRecordModel(RecordModel model) {
@@ -58,9 +70,12 @@ class User extends HiveObject {
       email: model.getStringValue("email"),
       emailVisibility: model.getBoolValue("emailVisibility"),
       verified: model.getBoolValue("verified"),
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
+      created: DateTime.parse(model.get("created")).toLocal(),
+      updated: DateTime.parse(model.get("updated")).toLocal(),
       avatarUrl: url,
+      cityName: model.getStringValue("cityName"),
+      locationLat: model.getDoubleValue("locationLat"),
+      locationLng: model.getDoubleValue("locationLng"),
     );
   }
 }

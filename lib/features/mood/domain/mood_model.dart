@@ -42,8 +42,8 @@ class Mood extends HiveObject {
       userId: model.getStringValue("userId"),
       value: model.getIntValue("value"),
       note: model.get("note"),
-      created: DateTime.parse(model.get("created")),
-      updated: DateTime.parse(model.get("updated")),
+      created: DateTime.parse(model.get("created")).toLocal(),
+      updated: DateTime.parse(model.get("updated")).toLocal(),
     );
   }
 
