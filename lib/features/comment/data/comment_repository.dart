@@ -21,8 +21,8 @@ import 'package:fourteen_november/services/pocket_base/pocket_base_collections.d
 /// - Manual remote refresh support
 /// - Persistent offline access
 class CommentRepository implements BaseRepository<Comment> {
-  @override
   /// PocketBase instance used for remote requests.
+  // TODO: migrate to Appwrite (AppwriteService.I.tablesDB)
   PocketBase get pb => PocketBaseService.I.instance;
 
   /// Local Hive box containing cached [Comment] models.

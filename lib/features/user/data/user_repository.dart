@@ -1,17 +1,17 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pocketbase/pocketbase.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
 import 'package:fourteen_november/core/base_repository/base_repository.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_service.dart';
-import 'package:fourteen_november/services/pocket_base/pocket_base_collections.dart';
+import 'package:fourteen_november/services/appwrite/appwrite_constants.dart';
 
 /// Repository responsible for managing cached [User] data.
 ///
 /// This repository follows an offline-first architecture:
 /// - Hive is used as the primary local data source.
-/// - PocketBase is used as the remote source of truth.
+/// - Appwrite is used as the remote source of truth.
 /// - UI reads data directly from local cache for fast and stable rendering.
 /// - Remote synchronization happens manually through refresh methods.
 ///
@@ -21,9 +21,8 @@ import 'package:fourteen_november/services/pocket_base/pocket_base_collections.d
 /// - Manual remote refresh support
 /// - Persistent offline access
 class UserRepository implements BaseRepository<User> {
-  @override
-  /// PocketBase instance used for remote requests.
-  PocketBase get pb => PocketBaseService.I.instance;
+  /// Appwrite tables API used for remote requests.
+  TablesDB get db => AppwriteService.I.tablesDB;
 
   /// Local Hive box containing cached [User] models.
   static Box<User> get _box => Hive.box<User>(HiveService.usersBoxKey);
@@ -62,7 +61,7 @@ class UserRepository implements BaseRepository<User> {
   }
 
   @override
-  /// Performs the initial synchronization with PocketBase.
+  /// Performs the initial synchronization with Appwrite.
   ///
   /// This method only fetches remote data when the local cache
   /// is empty. It is mainly intended to run during app startup
@@ -73,11 +72,12 @@ class UserRepository implements BaseRepository<User> {
     try {
       if (_box.isNotEmpty) return;
 
-      final records = await pb
-          .collection(PocketBaseCollections.users)
-          .getFullList();
+      final result = await db.listRows(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.users,
+      );
 
-      final users = records.map((e) => User.fromRecordModel(e)).toList();
+      final users = result.rows.map((e) => User.fromRow(e)).toList();
 
       for (final item in users) {
         await _box.put(item.id, item);
@@ -92,18 +92,19 @@ class UserRepository implements BaseRepository<User> {
   /// Fully refreshes local cache using the latest remote data.
   ///
   /// This method:
-  /// - Fetches all records from PocketBase
+  /// - Fetches all rows from Appwrite
   /// - Clears existing local cache
   /// - Replaces cache with fresh remote data
   ///
   /// Intended for pull-to-refresh actions or manual updates.
   Future<void> hardRefresh() async {
     try {
-      final records = await pb
-          .collection(PocketBaseCollections.users)
-          .getFullList();
+      final result = await db.listRows(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.users,
+      );
 
-      final users = records.map((e) => User.fromRecordModel(e)).toList();
+      final users = result.rows.map((e) => User.fromRow(e)).toList();
 
       await _box.clear();
 
