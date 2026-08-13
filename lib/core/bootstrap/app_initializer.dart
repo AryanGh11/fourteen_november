@@ -1,6 +1,7 @@
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:fourteen_november/features/user/user.dart';
+import 'package:fourteen_november/features/alert/alert.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/mood/mood.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
@@ -23,6 +24,7 @@ class AppInitializer {
     // Check if any of models needs to be synced
     await Future.wait([
       UserRepository().syncIfNeeded(),
+      AlertRepository().syncIfNeeded(),
       BackgroundRepository().syncIfNeeded(),
       CommentRepository().syncIfNeeded(),
       MoodRepository().syncIfNeeded(),
