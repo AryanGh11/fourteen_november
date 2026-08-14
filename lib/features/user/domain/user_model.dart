@@ -35,9 +35,6 @@ class User extends HiveObject {
   @HiveField(8)
   final String avatarUrl;
 
-  @HiveField(9, defaultValue: '')
-  final String cityName;
-
   @HiveField(10, defaultValue: 0)
   final double locationLat;
 
@@ -54,7 +51,6 @@ class User extends HiveObject {
     required this.created,
     required this.updated,
     required this.avatarUrl,
-    required this.cityName,
     required this.locationLat,
     required this.locationLng,
   });
@@ -77,7 +73,6 @@ class User extends HiveObject {
       created: DateTime.parse(row.$createdAt).toLocal(),
       updated: DateTime.parse(row.$updatedAt).toLocal(),
       avatarUrl: AppwriteService.fileUrl(avatarPath),
-      cityName: (data["cityName"] as String?) ?? '',
       locationLat: (data["locationLat"] as num?)?.toDouble() ?? 0,
       locationLng: (data["locationLng"] as num?)?.toDouble() ?? 0,
     );
