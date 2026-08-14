@@ -4,7 +4,13 @@ import 'package:fourteen_november/features/user/user.dart';
 class Weather {
   final String id;
 
+  /// Nearest resolved locality. With a precise fix this can be a
+  /// neighbourhood rather than the city, so [region] is often the friendlier
+  /// label of the two.
   final String name;
+
+  /// Wider administrative area, e.g. "Tehran" for a district within it.
+  final String region;
 
   final String country;
 
@@ -21,6 +27,7 @@ class Weather {
   Weather({
     required this.id,
     required this.name,
+    required this.region,
     required this.country,
     required this.localtime,
     required this.isDay,
@@ -46,6 +53,7 @@ class Weather {
     return Weather(
       id: (location!["name"] ?? "").toString().toLowerCase(),
       name: location["name"],
+      region: (location["region"] as String?) ?? '',
       country: location["country"],
       localtime: DateTime(
         localtime.year,

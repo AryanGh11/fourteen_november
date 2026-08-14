@@ -85,6 +85,53 @@ class UserRepository implements BaseRepository<User> {
     }
   }
 
+  /// Writes new coordinates onto the current user's record.
+  ///
+  /// Rounded to five decimal places, roughly a metre: a raw GPS reading
+  /// carries more digits than it has real accuracy, and the stats screen shows
+  /// whole kilometres anyway.
+  ///
+  /// Returns the updated [User].
+  ///
+  /// Throws:
+  /// - [ArgumentError] if there is no current user
+  /// - Any Appwrite/network related exception
+  Future<User> updateLocation({
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      final userId = UserProviderService().current?.id;
+
+      if (userId == null) {
+        throw ArgumentError("User not found");
+      }
+
+      final row = await db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.users,
+        rowId: userId,
+        data: {
+          "locationLat": _round(latitude),
+          "locationLng": _round(longitude),
+        },
+      );
+
+      final user = User.fromRow(row);
+
+      /// Update local cache with latest remote state.
+      await _box.put(user.id, user);
+
+      return user;
+    } catch (e) {
+      debugPrint("User location update failed: $e");
+      rethrow;
+    }
+  }
+
+  static double _round(double value) =>
+      double.parse(value.toStringAsFixed(5));
+
   @override
   /// Fully refreshes local cache using the latest remote data.
   ///

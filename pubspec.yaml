@@ -30,6 +30,7 @@ dependencies:
   shimmer: ^3.0.0
   latlong2: ^0.10.1
   appwrite: ^25.4.0
+  geolocator: ^14.0.2
 
 dev_dependencies:
   flutter_test:
