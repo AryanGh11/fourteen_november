@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.1.0
+
+Location becomes dynamic. The app reads the device's coordinates and derives everything else from them, rather than relying on a city typed into the database, so both the distance and the weather stay right when either of us travels.
+
+### Added
+
+- Device location via `geolocator`, requested on demand only — no background tracking. Refusals are reported specifically enough to tell someone whether to switch on GPS or re-enable the permission in Settings.
+- `Weather.region` alongside the locality name, since a precise fix resolves to the nearest place, which can be a neighbourhood rather than the city.
+
+### Changed
+
+- Weather is looked up by coordinates instead of a stored city name. The API returns the resolved place, so nothing has to be stored or kept in sync.
+- `cityName` is gone from the user record.
+- The weather screen shows one card per person rather than one per city; the previous grouping dropped a person whenever both were in the same place.
+- The weather API is called over https. Android blocks cleartext traffic by default, so the previous http endpoint worked on iOS and failed on Android.
+
+### Known issues
+
+Unchanged from 1.0.0: a failed initial sync is logged rather than surfaced, the stats screen assumes two users are cached, and data is readable and writable by anyone holding the project id.
+
 ## 1.0.0
 
 First tagged release.

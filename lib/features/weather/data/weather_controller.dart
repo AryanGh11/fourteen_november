@@ -4,20 +4,26 @@ import 'package:flutter/widgets.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/features/weather/weather.dart';
 
-// TODO: doc
+/// Talks to the weather API.
+///
+/// Queried by coordinate rather than by city name: `q` accepts `lat,lon`, and
+/// the response carries the resolved place name. That makes the location the
+/// single source of truth, so the name follows whoever moves without anything
+/// having to be typed in or kept up to date.
 class WeatherController {
   final http = HttpClient();
 
-  final String _baseApiUrl = 'http://api.weatherapi.com/v1';
+  // https rather than http: Android blocks cleartext traffic by default from
+  // API 28 up, so the plain http endpoint fails there while working on iOS.
+  final String _baseApiUrl = 'https://api.weatherapi.com/v1';
   final String _apiKey = '72f05ab0f25a4cbe8df102454262105';
 
-  Future<Weather> getCurrentFor({
-    required String cityName,
-    required User user,
-  }) async {
+  Future<Weather> getCurrentFor({required User user}) async {
     try {
+      final query = '${user.locationLat},${user.locationLng}';
+
       final url = Uri.parse(
-        '$_baseApiUrl/current.json?key=$_apiKey&q=$cityName',
+        '$_baseApiUrl/current.json?key=$_apiKey&q=$query',
       );
 
       final request = await http.getUrl(url);

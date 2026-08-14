@@ -34,6 +34,9 @@ class _StatsScreenState extends State<StatsScreen> {
 
       setState(() {});
     });
+
+    // Update user's location
+    UserProviderService().updateLocation();
   }
 
   @override

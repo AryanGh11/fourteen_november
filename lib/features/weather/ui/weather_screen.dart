@@ -29,6 +29,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     super.initState();
 
+    // Update user's location
+    UserProviderService().updateLocation();
+
     _initCities();
   }
 
@@ -47,17 +50,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Future<void> _initCities() async {
     final allUsers = UserRepository().getAll();
 
-    final Map<String, User> cityUserMap = Map.fromEntries(
-      allUsers.map((u) => MapEntry(u.cityName, u)),
-    );
-
     final List<Weather> cities = [];
 
-    for (final cityUser in cityUserMap.entries) {
-      final res = await _weatherRepository.getCurrentFor(
-        cityName: cityUser.key,
-        user: cityUser.value,
-      );
+    // One card per person rather than per place: each card is tied to a user's
+    // avatar, so two people in the same city should still both appear.
+    for (final user in allUsers) {
+      final res = await _weatherRepository.getCurrentFor(user: user);
 
       cities.add(res);
     }
