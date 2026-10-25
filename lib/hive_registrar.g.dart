@@ -8,6 +8,7 @@ import 'package:fourteen_november/features/background/domain/background_model.da
 import 'package:fourteen_november/features/comment/domain/comment_model.dart';
 import 'package:fourteen_november/features/mood/domain/mood_model.dart';
 import 'package:fourteen_november/features/post/domain/post_model.dart';
+import 'package:fourteen_november/features/stats/domain/general_stats_model.dart';
 import 'package:fourteen_november/features/user/domain/user_model.dart';
 
 extension HiveRegistrar on HiveInterface {
@@ -15,6 +16,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(AlertAdapter());
     registerAdapter(BackgroundAdapter());
     registerAdapter(CommentAdapter());
+    registerAdapter(GeneralStatsAdapter());
     registerAdapter(MoodAdapter());
     registerAdapter(PostAdapter());
     registerAdapter(UserAdapter());
@@ -26,6 +28,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(AlertAdapter());
     registerAdapter(BackgroundAdapter());
     registerAdapter(CommentAdapter());
+    registerAdapter(GeneralStatsAdapter());
     registerAdapter(MoodAdapter());
     registerAdapter(PostAdapter());
     registerAdapter(UserAdapter());
