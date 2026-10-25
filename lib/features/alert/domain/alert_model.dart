@@ -1,7 +1,7 @@
 // Prefixed: appwrite's models export `User` and `Row`, which collide with
 // this app's User model and Flutter's Row widget.
 import 'package:appwrite/models.dart' as models;
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 
 part 'alert_model.g.dart';
 
@@ -17,6 +17,22 @@ class Alert extends HiveObject {
 
   @HiveField(1)
   final String content;
+
+  @HiveField(6, defaultValue: '')
+  final String title;
+
+  /// Whether the reader is allowed to close the alert.
+  ///
+  /// A non dismissible alert stays until its window closes on its own.
+  @HiveField(7, defaultValue: true)
+  final bool dismissible;
+
+  /// Ids of the users who have already closed this alert.
+  ///
+  /// Held per alert rather than per device so dismissing on one phone does
+  /// not hide the alert from the other person.
+  @HiveField(8, defaultValue: <String>[])
+  final List<String> dismissedBy;
 
   /// Moment the alert becomes visible. Stored in local time.
   @HiveField(2)
@@ -35,6 +51,9 @@ class Alert extends HiveObject {
   Alert({
     required this.id,
     required this.content,
+    required this.title,
+    required this.dismissible,
+    required this.dismissedBy,
     required this.startAt,
     required this.endAt,
     required this.created,
@@ -47,11 +66,34 @@ class Alert extends HiveObject {
     return Alert(
       id: row.$id,
       content: (data["content"] as String?) ?? '',
+      title: (data["title"] as String?) ?? '',
+      // Defaults to dismissible so an alert created without the flag can
+      // still be closed rather than being stuck on screen.
+      dismissible: (data["dismissible"] as bool?) ?? true,
+      dismissedBy: _stringList(data["dismissedBy"]),
       startAt: DateTime.parse(data["startAt"] as String).toLocal(),
       endAt: DateTime.parse(data["endAt"] as String).toLocal(),
       created: DateTime.parse(row.$createdAt).toLocal(),
       updated: DateTime.parse(row.$updatedAt).toLocal(),
     );
+  }
+
+  /// Appwrite returns array columns as `List<dynamic>`.
+  static List<String> _stringList(dynamic value) {
+    if (value is! List) return const [];
+
+    return value.map((e) => e.toString()).toList();
+  }
+
+  /// Whether [userId] has already closed this alert.
+  bool isDismissedBy(String userId) => dismissedBy.contains(userId);
+
+  /// Whether the alert should still be shown to [userId] right now.
+  ///
+  /// Combines the time window with that user's own dismissal, which is what
+  /// most callers actually want.
+  bool isVisibleTo(String userId, [DateTime? at]) {
+    return isActiveAt(at) && !isDismissedBy(userId);
   }
 
   /// Whether the alert should be shown at [at], defaulting to now.

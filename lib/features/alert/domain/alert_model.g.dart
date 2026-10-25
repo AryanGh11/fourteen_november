@@ -8,7 +8,7 @@ part of 'alert_model.dart';
 
 class AlertAdapter extends TypeAdapter<Alert> {
   @override
-  final int typeId = 5;
+  final typeId = 5;
 
   @override
   Alert read(BinaryReader reader) {
@@ -19,6 +19,9 @@ class AlertAdapter extends TypeAdapter<Alert> {
     return Alert(
       id: fields[0] as String,
       content: fields[1] as String,
+      title: fields[6] == null ? '' : fields[6] as String,
+      dismissible: fields[7] == null ? true : fields[7] as bool,
+      dismissedBy: fields[8] == null ? [] : (fields[8] as List).cast<String>(),
       startAt: fields[2] as DateTime,
       endAt: fields[3] as DateTime,
       created: fields[4] as DateTime,
@@ -29,7 +32,7 @@ class AlertAdapter extends TypeAdapter<Alert> {
   @override
   void write(BinaryWriter writer, Alert obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +44,13 @@ class AlertAdapter extends TypeAdapter<Alert> {
       ..writeByte(4)
       ..write(obj.created)
       ..writeByte(5)
-      ..write(obj.updated);
+      ..write(obj.updated)
+      ..writeByte(6)
+      ..write(obj.title)
+      ..writeByte(7)
+      ..write(obj.dismissible)
+      ..writeByte(8)
+      ..write(obj.dismissedBy);
   }
 
   @override
