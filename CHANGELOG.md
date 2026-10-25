@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.2.0
+
+Brings the app back to building on Flutter 3.47, and adds alerts, a backgrounds screen, server-backed stats and a profile screen.
+
+### Before installing
+
+Run `setup_general_stats.js` in the API project once. It creates the table behind the stats screen and fills it with the dates the app used to have built in. Until then, the hug and together-since stats show a dash.
+
+### Added
+
+- **In-app alerts.** A message shown for a set window of time, such as the monthly anniversary, in a dialog over the home screen. Alerts can have a title and can be closable or not. Closing one is remembered per person on the server, so it stays closed after a reinstall and closing it on one phone does not hide it from the other. Alerts are checked on launch with a short wait, so a slow connection does not hold up the splash screen.
+- **Backgrounds screen.** Every background full screen, swiped through like a carousel, with pull to refresh. Backgrounds can be added from the gallery and deleted from here, and the home screen's backdrop picks up the change straight away.
+- **Profile screen.** Tap your avatar on the home screen to change your name and photo. Both are saved to the server, so the other person sees the change.
+- **Pull to refresh on the stats screen**, refreshing everything the stats are worked out from.
+
+### Changed
+
+- **The stats screen's dates now live on the server.** The last-hug and together-since dates were built into the app; they can now be updated after a visit without a new release. They were also read in each phone's own time zone, so the two counters ran 1.5 to 2.5 hours apart; both phones now count from the same moment.
+- **Moved to Flutter 3.47.** Two packages no longer worked with it, so they were replaced with their maintained versions: Hive with `hive_ce`, which reads the data already stored on each phone, and the icon set with `lucide_icons_flutter`. The iOS project was updated by Flutter itself, which raises the minimum to iOS 15. The Android build moves to the versions Flutter 3.47 requires: Gradle 8.14.3, Android Gradle Plugin 8.11.1 and Kotlin 2.2.20.
+
+### Fixed
+
+- The stats screen no longer crashes when the users have not loaded yet; missing values show a dash instead.
+
+### Known issues
+
+- A failed initial sync is logged rather than reported, so the app can open with no data on a bad first connection.
+- Most data can be read and changed by anyone holding the project id, which ships in the app. The stats dates are the exception: they are read only.
+
 ## 1.1.0
 
 Location becomes dynamic. The app reads the device's coordinates and derives everything else from them, rather than relying on a city typed into the database, so both the distance and the weather stay right when either of us travels.
