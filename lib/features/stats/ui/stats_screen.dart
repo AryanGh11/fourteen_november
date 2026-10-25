@@ -4,16 +4,15 @@ import 'package:latlong2/latlong.dart';
 import 'package:fourteen_november/features/mood/mood.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/user/user.dart';
+import 'package:fourteen_november/features/stats/stats.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
+import 'package:fourteen_november/shared/app_messenger.dart';
 import 'package:fourteen_november/shared/default_app_bar.dart';
 import 'package:fourteen_november/core/extensions/duration.dart';
 import 'package:fourteen_november/core/extensions/date_time.dart';
 
 part 'widgets/view.dart';
 part 'widgets/widgets/tile.dart';
-
-final _lastTimeVisitAt = DateTime(2026, 4, 4, 23, 0, 0, 0, 0);
-final _firstTimeVisitAt = DateTime(2025, 11, 14, 19, 0, 0, 0, 0);
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -23,6 +22,8 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
+  final _generalStatsRepository = GeneralStatsRepository();
+
   late final Timer _timer;
 
   @override
@@ -37,6 +38,8 @@ class _StatsScreenState extends State<StatsScreen> {
 
     // Update user's location
     UserProviderService().updateLocation();
+
+    _refreshStats();
   }
 
   @override
@@ -57,14 +60,51 @@ class _StatsScreenState extends State<StatsScreen> {
             togetherFor: _getTogetherFor(),
             memoriesCount: _getMemoriesCount(),
             moodsCount: _getMoodsCount(),
+            onRefresh: _refresh,
           ),
         ),
       ),
     );
   }
 
-  double _getDistanceInKm() {
+  /// Picks up dates changed on the server since they were cached, such as
+  /// [GeneralStats.lastHugAt] after a visit. Silent on failure: the cached
+  /// copy keeps the screen counting in the meantime.
+  Future<void> _refreshStats() async {
+    await _generalStatsRepository.hardRefresh();
+
+    if (mounted) setState(() {});
+  }
+
+  /// Pulls everything the stats are worked out from: the dates, the users
+  /// for distance, and the posts and moods behind the counts. Run together,
+  /// since none depends on another.
+  Future<void> _refresh() async {
+    try {
+      await Future.wait([
+        _generalStatsRepository.hardRefresh(),
+        UserRepository().hardRefresh(),
+        PostRepository().hardRefresh(),
+        MoodRepository().hardRefresh(),
+      ]);
+    } catch (_) {
+      if (!mounted) return;
+      AppMessenger.showError(
+        context,
+        'بخاطر نت پرسرعت ایران رفرش نشد! لطفا دوباره بکش پایین...',
+      );
+    } finally {
+      if (mounted) setState(() {});
+    }
+  }
+
+  /// `null` until both users are cached, rather than reading past the end of
+  /// the list.
+  double? _getDistanceInKm() {
     final users = UserRepository().getAll();
+
+    if (users.length < 2) return null;
+
     final distance = Distance();
 
     final meters = distance(
@@ -75,12 +115,22 @@ class _StatsScreenState extends State<StatsScreen> {
     return meters / 1000;
   }
 
-  Duration _getSinceLastTimeVisit() {
-    return DateTime.now().difference(_lastTimeVisitAt);
+  /// `null` until the stats have been fetched at least once.
+  Duration? _getSinceLastTimeVisit() {
+    final lastHugAt = _generalStatsRepository.current?.lastHugAt;
+
+    if (lastHugAt == null) return null;
+
+    return DateTime.now().difference(lastHugAt);
   }
 
-  String _getTogetherFor() {
-    return DateTime.now().getTogetherFor(_firstTimeVisitAt);
+  /// `null` until the stats have been fetched at least once.
+  String? _getTogetherFor() {
+    final togetherSince = _generalStatsRepository.current?.togetherSince;
+
+    if (togetherSince == null) return null;
+
+    return DateTime.now().getTogetherFor(togetherSince);
   }
 
   int _getMemoriesCount() {
