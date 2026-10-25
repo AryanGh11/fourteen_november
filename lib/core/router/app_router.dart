@@ -5,6 +5,7 @@ import 'package:fourteen_november/features/weather/weather.dart';
 import 'package:fourteen_november/core/router/route_provider.dart';
 import 'package:fourteen_november/features/mood/ui/mood_screen.dart';
 import 'package:fourteen_november/features/home/ui/home_screen.dart';
+import 'package:fourteen_november/features/background/background.dart';
 
 final appRouter = GoRouter(
   initialLocation: RouteProvider.home,
@@ -42,11 +43,18 @@ final appRouter = GoRouter(
         return WeatherScreen();
       },
     ),
-    
+
     GoRoute(
       path: RouteProvider.stats,
       builder: (context, state) {
         return StatsScreen();
+      },
+    ),
+
+    GoRoute(
+      path: RouteProvider.backgrounds,
+      builder: (context, state) {
+        return BackgroundsScreen();
       },
     ),
   ],
