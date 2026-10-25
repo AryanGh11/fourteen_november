@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fourteen_november/shared/custom_circle_avatar.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';

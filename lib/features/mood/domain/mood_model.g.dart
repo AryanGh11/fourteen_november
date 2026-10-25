@@ -8,7 +8,7 @@ part of 'mood_model.dart';
 
 class MoodAdapter extends TypeAdapter<Mood> {
   @override
-  final int typeId = 1;
+  final typeId = 1;
 
   @override
   Mood read(BinaryReader reader) {
@@ -19,7 +19,7 @@ class MoodAdapter extends TypeAdapter<Mood> {
     return Mood(
       id: fields[0] as String,
       userId: fields[1] as String,
-      value: fields[2] as int,
+      value: (fields[2] as num).toInt(),
       note: fields[3] as String?,
       created: fields[4] as DateTime,
       updated: fields[5] as DateTime,
