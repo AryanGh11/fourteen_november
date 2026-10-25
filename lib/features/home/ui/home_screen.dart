@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show Bidi, DateFormat;
 import 'package:go_router/go_router.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:fourteen_november/theme/dark_theme.dart';
 import 'package:fourteen_november/theme/app_colors.dart';
@@ -32,7 +33,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _backgrounds = BackgroundRepository().getAll();
+  final _backgroundRepository = BackgroundRepository();
 
   bool _hardRefreshing = false;
 
@@ -47,8 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final randomBackgrounds = _backgrounds..shuffle();
-
     return Scaffold(
       appBar: DefaultAppBar(
         leading: Padding(
@@ -72,8 +71,19 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: AnimatedBackground(
-                images: randomBackgrounds.map((b) => b.imageUrl).toList(),
+              // Watches the cache rather than reading it once, so a
+              // background added from the backgrounds screen joins the
+              // rotation as soon as you come back here.
+              child: ValueListenableBuilder(
+                valueListenable: _backgroundRepository.listenableBox(),
+                builder: (context, Box<Background> box, _) {
+                  final backgrounds = _backgroundRepository.getAllFromBox(box)
+                    ..shuffle();
+
+                  return AnimatedBackground(
+                    images: backgrounds.map((b) => b.imageUrl).toList(),
+                  );
+                },
               ),
             ),
             Positioned.fill(
