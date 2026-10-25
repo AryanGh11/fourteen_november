@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:appwrite/appwrite.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 import 'package:fourteen_november/core/base_repository/base_repository.dart';

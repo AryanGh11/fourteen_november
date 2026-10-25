@@ -3,8 +3,8 @@ import 'package:fourteen_november/theme/app_colors.dart';
 // Prefixed: appwrite's models export `User` and `Row`, which collide with
 // this app's User model and Flutter's Row widget.
 import 'package:appwrite/models.dart' as models;
-import 'package:lucide_icons/lucide_icons.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
 
 part 'mood_model.g.dart';
