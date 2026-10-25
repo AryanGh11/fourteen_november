@@ -1,10 +1,16 @@
+import 'dart:async';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' show Bidi, DateFormat;
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:fourteen_november/theme/dark_theme.dart';
+import 'package:fourteen_november/theme/app_colors.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
 import 'package:fourteen_november/shared/app_messenger.dart';
+import 'package:fourteen_november/features/alert/alert.dart';
 import 'package:fourteen_november/shared/profile_avatar.dart';
 import 'package:fourteen_november/shared/default_app_bar.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
@@ -14,6 +20,8 @@ import 'package:fourteen_november/shared/animated_background.dart';
 import 'package:fourteen_november/features/background/background.dart';
 import 'package:fourteen_november/shared/modals/select_user_modal/select_user_modal.dart';
 
+part './widgets/alert/alert.dart';
+part './widgets/alert/widgets/card.dart';
 part './widgets/tiles/tiles.dart';
 part './widgets/tiles/widgets/tile.dart';
 
@@ -25,7 +33,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _backgrounds = BackgroundRepository().getAll();
+  final _backgroundRepository = BackgroundRepository();
+
   bool _hardRefreshing = false;
 
   @override
@@ -39,13 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final randomBackgrounds = _backgrounds..shuffle();
-
     return Scaffold(
       appBar: DefaultAppBar(
         leading: Padding(
           padding: EdgeInsets.only(left: 20),
-          child: ProfileAvatar(),
+          child: GestureDetector(
+            onTap: () => context.push(RouteProvider.profile),
+            child: ProfileAvatar(),
+          ),
         ),
         title: Text("14 November 💕"),
         foregroundColor: Colors.white,
@@ -64,14 +74,26 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: AnimatedBackground(
-                images: randomBackgrounds.map((b) => b.imageUrl).toList(),
+              // Watches the cache rather than reading it once, so a
+              // background added from the backgrounds screen joins the
+              // rotation as soon as you come back here.
+              child: ValueListenableBuilder(
+                valueListenable: _backgroundRepository.listenableBox(),
+                builder: (context, Box<Background> box, _) {
+                  final backgrounds = _backgroundRepository.getAllFromBox(box)
+                    ..shuffle();
+
+                  return AnimatedBackground(
+                    images: backgrounds.map((b) => b.imageUrl).toList(),
+                  );
+                },
               ),
             ),
             Positioned.fill(
               child: Container(color: Colors.black.withValues(alpha: 0.6)),
             ),
             AppWrapper(child: Center(child: _Tiles())),
+            const _Alert(),
           ],
         ),
       ),

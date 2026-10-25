@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';

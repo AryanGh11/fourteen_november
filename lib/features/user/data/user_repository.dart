@@ -1,6 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
@@ -23,6 +23,9 @@ import 'package:fourteen_november/services/appwrite/appwrite_constants.dart';
 class UserRepository implements BaseRepository<User> {
   /// Appwrite tables API used for remote requests.
   TablesDB get db => AppwriteService.I.tablesDB;
+
+  /// Appwrite storage API used for avatar uploads.
+  Storage get files => AppwriteService.I.storage;
 
   /// Local Hive box containing cached [User] models.
   static Box<User> get _box => Hive.box<User>(HiveService.usersBoxKey);
@@ -154,6 +157,115 @@ class UserRepository implements BaseRepository<User> {
       }
     } catch (e) {
       debugPrint("User refresh failed: $e");
+    }
+  }
+
+  /// Renames the current user.
+  ///
+  /// Trimmed before saving, so stray spaces from the keyboard do not end up
+  /// in the name shown to the other person.
+  ///
+  /// Throws:
+  /// - [ArgumentError] if there is no current user, or the name is empty
+  /// - Any Appwrite/network related exception
+  Future<User> updateName(String name) async {
+    try {
+      final userId = UserProviderService().current?.id;
+      final trimmed = name.trim();
+
+      if (userId == null) throw ArgumentError("User not found");
+      if (trimmed.isEmpty) throw ArgumentError("Name is empty");
+
+      final row = await db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.users,
+        rowId: userId,
+        data: {"name": trimmed},
+      );
+
+      final user = User.fromRow(row);
+
+      await _box.put(user.id, user);
+
+      return user;
+    } catch (e) {
+      debugPrint("User name update failed: $e");
+      rethrow;
+    }
+  }
+
+  /// Replaces the current user's avatar with an image from the device.
+  ///
+  /// The new image is uploaded under a fresh id rather than overwriting the
+  /// old file. That changes the avatar url, which is what makes cached copies
+  /// of the old picture, on both phones, give way to the new one.
+  ///
+  /// Neither failure leaves an orphaned file in the bucket: if saving the new
+  /// id fails, the just-uploaded image is deleted again; once it has saved,
+  /// the previous image is deleted. A failure on that last step is only
+  /// logged, since the avatar itself has already changed.
+  ///
+  /// Throws:
+  /// - [ArgumentError] if there is no current user
+  /// - Any Appwrite/network related exception
+  Future<User> updateAvatar(String imagePath) async {
+    String? uploadedId;
+
+    try {
+      final current = UserProviderService().current;
+
+      if (current == null) throw ArgumentError("User not found");
+
+      final file = await files.createFile(
+        bucketId: AppwriteConstants.mediaBucketId,
+        fileId: ID.unique(),
+        file: InputFile.fromPath(path: imagePath),
+      );
+
+      uploadedId = file.$id;
+
+      final row = await db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteTables.users,
+        rowId: current.id,
+        data: {"avatarId": uploadedId},
+      );
+
+      // Saved: the upload is now referenced, so it must not be cleaned up.
+      uploadedId = null;
+
+      final user = User.fromRow(row);
+
+      await _box.put(user.id, user);
+
+      final previousId = current.avatarPath;
+      if (previousId.isNotEmpty && previousId != user.avatarPath) {
+        try {
+          await files.deleteFile(
+            bucketId: AppwriteConstants.mediaBucketId,
+            fileId: previousId,
+          );
+        } catch (e) {
+          debugPrint("Previous avatar delete failed: $e");
+        }
+      }
+
+      return user;
+    } catch (e) {
+      debugPrint("User avatar update failed: $e");
+
+      if (uploadedId != null) {
+        try {
+          await files.deleteFile(
+            bucketId: AppwriteConstants.mediaBucketId,
+            fileId: uploadedId,
+          );
+        } catch (cleanupError) {
+          debugPrint("Avatar upload cleanup failed: $cleanupError");
+        }
+      }
+
+      rethrow;
     }
   }
 }

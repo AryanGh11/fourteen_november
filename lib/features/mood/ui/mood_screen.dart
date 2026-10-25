@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/mood/mood.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
 import 'package:fourteen_november/shared/app_messenger.dart';

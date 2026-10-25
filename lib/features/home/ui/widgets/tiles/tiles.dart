@@ -44,6 +44,13 @@ class _Tiles extends StatelessWidget {
           icon: LucideIcons.heartPulse,
           onTap: () => _navigateTo(context, RouteProvider.posts),
         ),
+        // Just a blank space for now
+        Container(),
+        _Tile(
+          title: "Backgrounds",
+          icon: LucideIcons.images,
+          onTap: () => _navigateTo(context, RouteProvider.backgrounds),
+        ),
       ],
     );
   }

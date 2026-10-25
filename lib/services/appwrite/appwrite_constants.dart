@@ -17,8 +17,10 @@ class AppwriteConstants {
 
 /// Table ids, replacing the former PocketBase collection names.
 class AppwriteTables {
+  static const String alerts = 'alerts';
   static const String backgrounds = 'backgrounds';
   static const String comments = 'comments';
+  static const String generalStats = 'generalStats';
   static const String moods = 'moods';
   static const String posts = 'posts';
   static const String users = 'users';
