@@ -5,6 +5,7 @@ import 'package:fourteen_november/features/alert/alert.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/mood/mood.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
+import 'package:fourteen_november/features/stats/stats.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 import 'package:fourteen_november/features/background/background.dart';
 import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
@@ -34,6 +35,7 @@ class AppInitializer {
       AlertRepository().syncIfNeeded().timeout(_alertWait, onTimeout: () {}),
       BackgroundRepository().syncIfNeeded(),
       CommentRepository().syncIfNeeded(),
+      GeneralStatsRepository().syncIfNeeded(),
       MoodRepository().syncIfNeeded(),
       PostRepository().syncIfNeeded(),
     ]);
