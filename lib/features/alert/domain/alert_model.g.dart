@@ -1,0 +1,65 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'alert_model.dart';
+
+// **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
+class AlertAdapter extends TypeAdapter<Alert> {
+  @override
+  final typeId = 5;
+
+  @override
+  Alert read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Alert(
+      id: fields[0] as String,
+      content: fields[1] as String,
+      title: fields[6] == null ? '' : fields[6] as String,
+      dismissible: fields[7] == null ? true : fields[7] as bool,
+      dismissedBy: fields[8] == null ? [] : (fields[8] as List).cast<String>(),
+      startAt: fields[2] as DateTime,
+      endAt: fields[3] as DateTime,
+      created: fields[4] as DateTime,
+      updated: fields[5] as DateTime,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Alert obj) {
+    writer
+      ..writeByte(9)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.content)
+      ..writeByte(2)
+      ..write(obj.startAt)
+      ..writeByte(3)
+      ..write(obj.endAt)
+      ..writeByte(4)
+      ..write(obj.created)
+      ..writeByte(5)
+      ..write(obj.updated)
+      ..writeByte(6)
+      ..write(obj.title)
+      ..writeByte(7)
+      ..write(obj.dismissible)
+      ..writeByte(8)
+      ..write(obj.dismissedBy);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AlertAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

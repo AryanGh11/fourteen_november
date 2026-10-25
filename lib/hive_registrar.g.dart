@@ -3,6 +3,7 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
+import 'package:fourteen_november/features/alert/domain/alert_model.dart';
 import 'package:fourteen_november/features/background/domain/background_model.dart';
 import 'package:fourteen_november/features/comment/domain/comment_model.dart';
 import 'package:fourteen_november/features/mood/domain/mood_model.dart';
@@ -11,6 +12,7 @@ import 'package:fourteen_november/features/user/domain/user_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(AlertAdapter());
     registerAdapter(BackgroundAdapter());
     registerAdapter(CommentAdapter());
     registerAdapter(MoodAdapter());
@@ -21,6 +23,7 @@ extension HiveRegistrar on HiveInterface {
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
+    registerAdapter(AlertAdapter());
     registerAdapter(BackgroundAdapter());
     registerAdapter(CommentAdapter());
     registerAdapter(MoodAdapter());
