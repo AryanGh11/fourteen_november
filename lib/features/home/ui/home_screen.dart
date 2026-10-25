@@ -52,7 +52,10 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: DefaultAppBar(
         leading: Padding(
           padding: EdgeInsets.only(left: 20),
-          child: ProfileAvatar(),
+          child: GestureDetector(
+            onTap: () => context.push(RouteProvider.profile),
+            child: ProfileAvatar(),
+          ),
         ),
         title: Text("14 November 💕"),
         foregroundColor: Colors.white,

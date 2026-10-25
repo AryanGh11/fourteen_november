@@ -11,4 +11,6 @@ class RouteProvider {
   static String get stats => "/stats";
 
   static String get backgrounds => "/backgrounds";
+
+  static String get profile => "/profile";
 }
