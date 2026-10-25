@@ -1,4 +1,4 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:fourteen_november/services/hive/hive_service.dart';
 
 class SharedPerformanceService {

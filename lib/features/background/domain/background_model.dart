@@ -1,7 +1,7 @@
 // Prefixed: appwrite's models export `User` and `Row`, which collide with
 // this app's User model and Flutter's Row widget.
 import 'package:appwrite/models.dart' as models;
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:fourteen_november/services/appwrite/appwrite_service.dart';
 
 part 'background_model.g.dart';

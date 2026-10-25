@@ -8,7 +8,7 @@ part of 'background_model.dart';
 
 class BackgroundAdapter extends TypeAdapter<Background> {
   @override
-  final int typeId = 2;
+  final typeId = 2;
 
   @override
   Background read(BinaryReader reader) {
