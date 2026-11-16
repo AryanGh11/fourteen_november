@@ -2,18 +2,23 @@ part of '../../../home_screen.dart';
 
 /// The visual body of an in-app alert.
 ///
-/// One card serves every alert; [celebratory] only shifts its accent and icon,
-/// so occasions like the monthly anniversary feel warmer without needing a
-/// separate dialog with its own open and close handling.
+/// One card serves every alert; its [AlertKind] only shifts the accent and
+/// icon, so a birthday or an anniversary reads as its own moment without
+/// needing a separate dialog with its own open and close handling.
+///
+/// An alert with an action shows that action as its button instead of the
+/// usual close button, e.g. "Open 🎁" for a gift.
 class _AlertCard extends StatelessWidget {
   final Alert alert;
-  final bool celebratory;
+  final AlertKind kind;
   final VoidCallback onClose;
+  final VoidCallback onAction;
 
   const _AlertCard({
     required this.alert,
-    required this.celebratory,
+    required this.kind,
     required this.onClose,
+    required this.onAction,
   });
 
   @override
@@ -21,7 +26,21 @@ class _AlertCard extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final tint = celebratory ? AppColors.accent : colors.primary;
+    final celebratory = kind != AlertKind.standard;
+
+    final tint = switch (kind) {
+      AlertKind.standard => colors.primary,
+      AlertKind.anniversary => AppColors.accent,
+      // A different accent from the anniversary, so the two occasions do not
+      // look like the same alert.
+      AlertKind.birthday => AppColors.secondary,
+    };
+
+    final icon = switch (kind) {
+      AlertKind.standard => LucideIcons.bellRing,
+      AlertKind.anniversary => LucideIcons.heart,
+      AlertKind.birthday => LucideIcons.cake,
+    };
 
     return Dialog(
       backgroundColor: colors.surfaceContainerHigh,
@@ -42,11 +61,7 @@ class _AlertCard extends StatelessWidget {
                   color: tint.withValues(alpha: 0.16),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  celebratory ? LucideIcons.heart : LucideIcons.bellRing,
-                  color: tint,
-                  size: 26,
-                ),
+                child: Icon(icon, color: tint, size: 26),
               ),
               const SizedBox(height: 18),
               if (alert.title.isNotEmpty) ...[
@@ -76,7 +91,30 @@ class _AlertCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              if (alert.dismissible)
+              if (alert.hasAction)
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: FilledButton(
+                    onPressed: onAction,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: tint,
+                      // Both accents are light pastels, so dark text keeps the
+                      // label readable on either.
+                      foregroundColor: AppColors.lightTextPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      textStyle: textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: Text(
+                      alert.actionLabel.isEmpty ? "Open" : alert.actionLabel,
+                    ),
+                  ),
+                )
+              else if (alert.dismissible)
                 SizedBox(
                   width: double.infinity,
                   height: 48,

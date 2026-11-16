@@ -14,6 +14,7 @@ import 'package:fourteen_november/features/user/domain/user_model.dart';
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(AlertAdapter());
+    registerAdapter(AlertKindAdapter());
     registerAdapter(BackgroundAdapter());
     registerAdapter(CommentAdapter());
     registerAdapter(GeneralStatsAdapter());
@@ -26,6 +27,7 @@ extension HiveRegistrar on HiveInterface {
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(AlertAdapter());
+    registerAdapter(AlertKindAdapter());
     registerAdapter(BackgroundAdapter());
     registerAdapter(CommentAdapter());
     registerAdapter(GeneralStatsAdapter());

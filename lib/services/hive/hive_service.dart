@@ -24,6 +24,7 @@ class HiveService {
 
     // Adapters
     Hive.registerAdapter(AlertAdapter());
+    Hive.registerAdapter(AlertKindAdapter());
     Hive.registerAdapter(BackgroundAdapter());
     Hive.registerAdapter(CommentAdapter());
     Hive.registerAdapter(GeneralStatsAdapter());

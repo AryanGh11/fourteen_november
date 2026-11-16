@@ -29,6 +29,9 @@ dependencies:
   appwrite: ^25.4.0
   geolocator: ^14.0.2
   lucide_icons_flutter: ^4.0.1
+  video_player: ^2.14.1
+  background_downloader: ^9.6.6
+  wakelock_plus: ^1.5.2
 
 dev_dependencies:
   flutter_test:
