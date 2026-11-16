@@ -5,6 +5,7 @@ import 'package:fourteen_november/features/weather/weather.dart';
 import 'package:fourteen_november/core/router/route_provider.dart';
 import 'package:fourteen_november/features/mood/ui/mood_screen.dart';
 import 'package:fourteen_november/features/home/ui/home_screen.dart';
+import 'package:fourteen_november/features/gift/gift.dart';
 import 'package:fourteen_november/features/profile/profile.dart';
 import 'package:fourteen_november/features/background/background.dart';
 
@@ -63,6 +64,13 @@ final appRouter = GoRouter(
       path: RouteProvider.profile,
       builder: (context, state) {
         return ProfileScreen();
+      },
+    ),
+
+    GoRoute(
+      path: RouteProvider.giftPattern,
+      builder: (context, state) {
+        return GiftScreen(giftId: state.pathParameters['id']!);
       },
     ),
   ],

@@ -13,4 +13,8 @@ class RouteProvider {
   static String get backgrounds => "/backgrounds";
 
   static String get profile => "/profile";
+
+  /// Route pattern for a gift; open one with [gift].
+  static String get giftPattern => "/gift/:id";
+  static String gift(String id) => "/gift/$id";
 }

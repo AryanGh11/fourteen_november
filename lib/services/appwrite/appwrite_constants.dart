@@ -21,6 +21,7 @@ class AppwriteTables {
   static const String backgrounds = 'backgrounds';
   static const String comments = 'comments';
   static const String generalStats = 'generalStats';
+  static const String gifts = 'gifts';
   static const String moods = 'moods';
   static const String posts = 'posts';
   static const String users = 'users';

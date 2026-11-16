@@ -22,6 +22,9 @@ class AlertAdapter extends TypeAdapter<Alert> {
       title: fields[6] == null ? '' : fields[6] as String,
       dismissible: fields[7] == null ? true : fields[7] as bool,
       dismissedBy: fields[8] == null ? [] : (fields[8] as List).cast<String>(),
+      actionLabel: fields[9] == null ? '' : fields[9] as String,
+      actionRoute: fields[10] == null ? '' : fields[10] as String,
+      kind: fields[12] == null ? AlertKind.standard : fields[12] as AlertKind,
       startAt: fields[2] as DateTime,
       endAt: fields[3] as DateTime,
       created: fields[4] as DateTime,
@@ -32,7 +35,7 @@ class AlertAdapter extends TypeAdapter<Alert> {
   @override
   void write(BinaryWriter writer, Alert obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -50,7 +53,13 @@ class AlertAdapter extends TypeAdapter<Alert> {
       ..writeByte(7)
       ..write(obj.dismissible)
       ..writeByte(8)
-      ..write(obj.dismissedBy);
+      ..write(obj.dismissedBy)
+      ..writeByte(9)
+      ..write(obj.actionLabel)
+      ..writeByte(10)
+      ..write(obj.actionRoute)
+      ..writeByte(12)
+      ..write(obj.kind);
   }
 
   @override
@@ -60,6 +69,47 @@ class AlertAdapter extends TypeAdapter<Alert> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AlertAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class AlertKindAdapter extends TypeAdapter<AlertKind> {
+  @override
+  final typeId = 7;
+
+  @override
+  AlertKind read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return AlertKind.standard;
+      case 1:
+        return AlertKind.anniversary;
+      case 2:
+        return AlertKind.birthday;
+      default:
+        return AlertKind.standard;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, AlertKind obj) {
+    switch (obj) {
+      case AlertKind.standard:
+        writer.writeByte(0);
+      case AlertKind.anniversary:
+        writer.writeByte(1);
+      case AlertKind.birthday:
+        writer.writeByte(2);
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AlertKindAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

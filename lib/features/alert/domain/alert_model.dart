@@ -5,6 +5,31 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 
 part 'alert_model.g.dart';
 
+/// The occasions an alert can be styled for.
+///
+/// Each kind has its own accent and icon on the alert card, so a birthday and
+/// an anniversary read as different moments rather than the same dialog.
+@HiveType(typeId: 7)
+enum AlertKind {
+  @HiveField(0)
+  standard,
+
+  @HiveField(1)
+  anniversary,
+
+  @HiveField(2)
+  birthday;
+
+  /// Parses the server's value, falling back to [standard] for a missing or
+  /// unrecognised one so a typo on the server cannot break the alert.
+  static AlertKind fromName(String? name) {
+    return AlertKind.values.firstWhere(
+      (kind) => kind.name == name,
+      orElse: () => AlertKind.standard,
+    );
+  }
+}
+
 /// A message shown inside the app for a bounded window of time.
 ///
 /// Unlike the other models this one is only meaningful relative to the current
@@ -34,6 +59,24 @@ class Alert extends HiveObject {
   @HiveField(8, defaultValue: <String>[])
   final List<String> dismissedBy;
 
+  /// Label for the alert's action button, e.g. "Open 🎁". Only meaningful
+  /// alongside [actionRoute].
+  @HiveField(9, defaultValue: '')
+  final String actionLabel;
+
+  /// In-app route the action button opens, e.g. `/gift/birthday-2026`.
+  /// Empty for an alert that is only a message.
+  @HiveField(10, defaultValue: '')
+  final String actionRoute;
+
+  /// Which look the alert takes; see [AlertKind].
+  ///
+  /// Stored by name. Slot 11 is deliberately skipped: it briefly held a
+  /// different field during development, and reusing it could misread an
+  /// alert cached at that time.
+  @HiveField(12, defaultValue: AlertKind.standard)
+  final AlertKind kind;
+
   /// Moment the alert becomes visible. Stored in local time.
   @HiveField(2)
   final DateTime startAt;
@@ -54,6 +97,9 @@ class Alert extends HiveObject {
     required this.title,
     required this.dismissible,
     required this.dismissedBy,
+    required this.actionLabel,
+    required this.actionRoute,
+    required this.kind,
     required this.startAt,
     required this.endAt,
     required this.created,
@@ -71,6 +117,9 @@ class Alert extends HiveObject {
       // still be closed rather than being stuck on screen.
       dismissible: (data["dismissible"] as bool?) ?? true,
       dismissedBy: _stringList(data["dismissedBy"]),
+      actionLabel: (data["actionLabel"] as String?) ?? '',
+      actionRoute: (data["actionRoute"] as String?) ?? '',
+      kind: AlertKind.fromName(data["kind"] as String?),
       startAt: DateTime.parse(data["startAt"] as String).toLocal(),
       endAt: DateTime.parse(data["endAt"] as String).toLocal(),
       created: DateTime.parse(row.$createdAt).toLocal(),
@@ -87,6 +136,10 @@ class Alert extends HiveObject {
 
   /// Whether [userId] has already closed this alert.
   bool isDismissedBy(String userId) => dismissedBy.contains(userId);
+
+  /// Whether the alert leads somewhere in the app, rather than only showing a
+  /// message.
+  bool get hasAction => actionRoute.isNotEmpty;
 
   /// Whether the alert should still be shown to [userId] right now.
   ///
