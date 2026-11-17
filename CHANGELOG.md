@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.3.0
+
+Adds a gift screen with video reveal and message, improves the alert system with better routing, and updates the Hive service for local storage.
+
+### Added
+
+- **Gift screen.** A new screen with a video reveal animation and a personal message, accessible from the home screen.
+- **Gift model and repository.** Domain model, data repository, and UI widgets for the gift feature.
+
+### Changed
+
+- **Alert system improvements.** Updated alert model with enhanced fields and generated code. Improved alert card and widget components for better display.
+- **Routing updates.** Updated app router and route provider to support new navigation patterns.
+- **Hive service.** Updated local storage service and registrar for better data persistence.
+- **Appwrite constants.** Updated configuration constants for backend integration.
+
+### Fixed
+
+- Alert display issues on home screen.
+- Routing edge cases with new screens.
+
 ## 1.2.0
 
 Brings the app back to building on Flutter 3.47, and adds alerts, a backgrounds screen, server-backed stats and a profile screen.

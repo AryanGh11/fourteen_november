@@ -115,6 +115,9 @@ class _AlertState extends State<_Alert> with WidgetsBindingObserver {
     _openId = alert.id;
     _closedByExpiry = false;
 
+    // Whether the dialog was left through its action rather than closed.
+    var actionTaken = false;
+
     // showGeneralDialog does not carry the caller's theme into the overlay the
     // way showDialog does, so it is captured here to keep the home screen's
     // dark styling.
@@ -140,8 +143,16 @@ class _AlertState extends State<_Alert> with WidgetsBindingObserver {
             canPop: alert.dismissible,
             child: _AlertCard(
               alert: alert,
-              celebratory: alert.id == _monthlyAnniversaryAlertId,
+              // The id check keeps the existing monthly anniversary alert,
+              // created before kinds existed, in its anniversary style.
+              kind: alert.id == _monthlyAnniversaryAlertId
+                  ? AlertKind.anniversary
+                  : alert.kind,
               onClose: () => Navigator.of(dialogContext).pop(),
+              onAction: () {
+                actionTaken = true;
+                Navigator.of(dialogContext).pop();
+              },
             ),
           ),
         );
@@ -153,14 +164,23 @@ class _AlertState extends State<_Alert> with WidgetsBindingObserver {
     _openId = null;
 
     // Every route out of the dialog other than expiry is the reader closing
-    // it: the button, the barrier, or the back gesture.
+    // it: the button, the barrier, or the back gesture. Taking the action
+    // counts too, so the alert does not reappear on returning.
     if (!_closedByExpiry) {
       _closedThisSession.add(alert.id);
 
-      if (alert.dismissible) unawaited(_dismiss(alert));
+      if (alert.dismissible || actionTaken) unawaited(_dismiss(alert));
     }
 
-    if (mounted) _sync();
+    if (!mounted) return;
+
+    // Navigated only once the dialog is fully closed, so the new screen is
+    // not pushed underneath it.
+    if (actionTaken && alert.hasAction) {
+      unawaited(context.push(alert.actionRoute));
+    }
+
+    _sync();
   }
 
   /// Background blurs in while the card fades and settles from slightly
