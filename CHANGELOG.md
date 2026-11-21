@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.5.0
+
+Redesigns the home screen and improves period tracking.
+
+### Changed
+
+- **Home screen.** A dashboard with a story card, recent mood and memory previews, quick links, and bottom navigation over the rotating photo backgrounds.
+- The greeting changes with the time of day, and the mood preview shows the selected person's latest check-in.
+
+### Added
+
+- Swipe to delete a period record.
+
+### Fixed
+
+- Corrected the display of years in the time together calculation and aligned mood author names.
+
+### Known issues
+
+- Period records saved while offline may be lost on a hard refresh before they sync. The current background sync does not retry failed uploads.
+- The redesigned home and period screens have not been visually verified on a build of this version.
+
 ## 1.4.0
 
 Adds a period tracker for recording start dates and looking back at previous cycles.
