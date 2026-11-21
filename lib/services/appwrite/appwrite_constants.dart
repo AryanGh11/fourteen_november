@@ -23,6 +23,7 @@ class AppwriteTables {
   static const String generalStats = 'generalStats';
   static const String gifts = 'gifts';
   static const String moods = 'moods';
+  static const String periods = 'periods';
   static const String posts = 'posts';
   static const String users = 'users';
 }
