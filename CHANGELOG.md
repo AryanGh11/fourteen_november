@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.4.0
+
+Adds a period tracker for recording start dates and looking back at previous cycles.
+
+### Added
+
+- **Period tracking.** Record a start date, browse it on a Gregorian calendar, and see the history of recorded starts.
+- **Cycle summary.** See the most recent start, average interval and an approximate next date based on recorded starts.
+
+### Known issues
+
+- Period records saved while offline may be lost on a hard refresh before they sync. The current background sync does not retry failed uploads.
+- The redesigned period screen has not yet been visually verified on a build of this version.
+
 ## 1.3.0
 
 Adds a gift screen with video reveal and message, improves the alert system with better routing, and updates the Hive service for local storage.
