@@ -17,6 +17,6 @@ extension DateTimeExtension on DateTime {
       months += 12;
     }
 
-    return '${years != 0 ? years : ''} $months m $days d';
+    return '${years != 0 ? '$years y' : ''} $months m $days d';
   }
 }
