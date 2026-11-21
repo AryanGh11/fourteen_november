@@ -25,14 +25,14 @@ class _View extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'یه گوشه برای مراقبت از خودت 💗',
+                      'یادت نره ثبتش کنی خانوم محترم 💗',
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'تاریخ شروع دوره‌هاتو اینجا نگه دار.',
+                      'دیگه لازم نیست کل چتا رو بگردی دنبالش ',
                       style: textTheme.bodyMedium?.copyWith(
                         color: colors.onSurfaceVariant,
                       ),

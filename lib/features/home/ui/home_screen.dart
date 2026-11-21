@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart' show Bidi, DateFormat;
 import 'package:go_router/go_router.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart' show Bidi, DateFormat;
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:fourteen_november/theme/dark_theme.dart';
 import 'package:fourteen_november/theme/app_colors.dart';
 import 'package:fourteen_november/features/user/user.dart';
+import 'package:fourteen_november/features/mood/mood.dart';
+import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
 import 'package:fourteen_november/shared/app_messenger.dart';
 import 'package:fourteen_november/features/alert/alert.dart';
@@ -18,12 +20,18 @@ import 'package:fourteen_november/shared/loading_icon_button.dart';
 import 'package:fourteen_november/core/router/route_provider.dart';
 import 'package:fourteen_november/shared/animated_background.dart';
 import 'package:fourteen_november/features/background/background.dart';
+import 'package:fourteen_november/shared/custom_cached_network_image.dart';
 import 'package:fourteen_november/shared/modals/select_user_modal/select_user_modal.dart';
 
+part './widgets/mood_card.dart';
+part './widgets/story_card.dart';
+part './widgets/quick_link.dart';
 part './widgets/alert/alert.dart';
+part './widgets/memory_card.dart';
+part './widgets/home_content.dart';
+part './widgets/section_title.dart';
+part './widgets/home_navigation.dart';
 part './widgets/alert/widgets/card.dart';
-part './widgets/tiles/tiles.dart';
-part './widgets/tiles/widgets/tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -69,6 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       extendBodyBehindAppBar: true,
+      bottomNavigationBar: Theme(
+        data: darkTheme,
+        child: const _HomeNavigation(),
+      ),
       body: Theme(
         data: darkTheme,
         child: Stack(
@@ -90,9 +102,27 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Positioned.fill(
-              child: Container(color: Colors.black.withValues(alpha: 0.6)),
+              child: Container(color: Colors.black.withValues(alpha: 0.76)),
             ),
-            AppWrapper(child: Center(child: _Tiles())),
+            SafeArea(
+              bottom: false,
+              child: AppWrapper(
+                padding: const EdgeInsets.fromLTRB(
+                  20,
+                  kToolbarHeight + 8,
+                  20,
+                  0,
+                ),
+                child: ValueListenableBuilder<Box<Mood>>(
+                  valueListenable: MoodRepository().listenableBox(),
+                  builder: (context, _, __) =>
+                      ValueListenableBuilder<Box<Post>>(
+                        valueListenable: PostRepository().listenableBox(),
+                        builder: (context, _, __) => _HomeContent(),
+                      ),
+                ),
+              ),
+            ),
             const _Alert(),
           ],
         ),
@@ -111,6 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (selectedUser == null) return;
 
       await UserProviderService().update(selectedUser.id);
+      if (mounted) setState(() {});
     }
   }
 
@@ -124,9 +155,11 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       AppMessenger.showError(context, 'نت عالیه! یبار دیگه بزن نفس');
     } finally {
-      setState(() {
-        _hardRefreshing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _hardRefreshing = false;
+        });
+      }
     }
   }
 }
