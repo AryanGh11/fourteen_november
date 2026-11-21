@@ -52,6 +52,7 @@ class _TileContent extends StatelessWidget {
           Column(
             spacing: 4,
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               CustomCircleAvatar(url: mood.user.avatarUrl),
               Text(mood.user.name, style: textTheme.labelSmall),

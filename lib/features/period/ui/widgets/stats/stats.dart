@@ -38,7 +38,7 @@ class _Stats extends StatelessWidget {
     final estimate = days == null
         ? 'با ثبت دوره بعدی، یک تخمین می‌بینی'
         : days > 0
-        ? '$days روز تا تاریخ تخمینی'
+        ? '$days روز تا پریود بعدی پیش بینی شده'
         : days == 0
         ? 'تاریخ تخمینی: امروز'
         : 'تاریخ تخمینی گذشته است';
@@ -87,7 +87,7 @@ class _Stats extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          Divider(color: colors.outlineVariant.withValues(alpha: .5)),
+          Divider(color: colors.outlineVariant.withValues(alpha: .1)),
           const SizedBox(height: 8),
           Text(
             estimate,

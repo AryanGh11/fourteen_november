@@ -80,7 +80,7 @@ class _CalendarState extends State<_Calendar> {
             ],
           ),
           Text(
-            "تقویم میلادی · دایره صورتی یعنی شروع ثبت‌شده",
+            "دایره صورتی یعنی شروع ثبت‌ شده",
             style: textTheme.bodySmall?.copyWith(
               color: colors.onSurfaceVariant,
             ),
