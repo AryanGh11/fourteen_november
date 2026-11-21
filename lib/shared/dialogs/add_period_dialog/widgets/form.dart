@@ -63,7 +63,7 @@ class _Form extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: colors.primary, size: 20),
+                  Icon(Icons.calendar_today, color: AppColors.accent, size: 20),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -85,6 +85,9 @@ class _Form extends StatelessWidget {
           LoadingElevatedButton(
             onPressed: onSubmit,
             loading: submitting,
+            style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(AppColors.accent),
+            ),
             child: const Text("ثبت تاریخ"),
           ),
         ],

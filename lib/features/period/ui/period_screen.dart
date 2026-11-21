@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:fourteen_november/features/period/period.dart';
+import 'package:fourteen_november/theme/app_colors.dart';
 import 'package:fourteen_november/shared/app_wrapper.dart';
 import 'package:fourteen_november/shared/app_messenger.dart';
+import 'package:fourteen_november/features/period/period.dart';
 import 'package:fourteen_november/shared/default_app_bar.dart';
+import 'package:fourteen_november/shared/custom_circular_progress_indicator.dart';
 import 'package:fourteen_november/shared/dialogs/add_period_dialog/add_period_dialog.dart';
-import 'package:fourteen_november/theme/app_colors.dart';
 
 part 'widgets/view.dart';
 part 'widgets/calendar/calendar.dart';
@@ -22,7 +23,7 @@ class PeriodScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: DefaultAppBar(title: const Text("ردیاب دوره")),
+      appBar: DefaultAppBar(title: const Text("Periods")),
       body: AppWrapper(
         child: ValueListenableBuilder(
           valueListenable: periodRepository.listenableBox(),
@@ -33,12 +34,10 @@ class PeriodScreen extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddPeriodDialog(context),
         backgroundColor: AppColors.accent,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add),
-        label: const Text("ثبت شروع دوره"),
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

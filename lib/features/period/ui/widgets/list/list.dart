@@ -26,7 +26,9 @@ class _List extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          ...periods.map((period) => _Tile(period: period)),
+          ...periods.map(
+            (period) => _Tile(key: ValueKey(period.id), period: period),
+          ),
         ],
       ),
     );
