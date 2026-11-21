@@ -18,10 +18,9 @@ class _Tiles extends StatelessWidget {
           onTap: () => _navigateTo(context, RouteProvider.moods),
         ),
         _Tile(
-          title: "Future",
-          icon: LucideIcons.star,
-          onTap: () => _navigateTo(context, RouteProvider.home),
-          disabled: true,
+          title: "Period",
+          icon: LucideIcons.calendarHeart,
+          onTap: () => _navigateTo(context, RouteProvider.periods),
         ),
         _Tile(
           title: "Notes",

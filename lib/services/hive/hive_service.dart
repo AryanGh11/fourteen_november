@@ -7,6 +7,7 @@ import 'package:fourteen_november/features/user/user.dart';
 import 'package:fourteen_november/features/stats/stats.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
 import 'package:fourteen_november/features/background/background.dart';
+import 'package:fourteen_november/features/period/period.dart';
 
 class HiveService {
   static final String sharedPerformanceBoxKey = "sharedPerformanceBox";
@@ -15,6 +16,7 @@ class HiveService {
   static final String commentsBoxKey = "commentsBox";
   static final String generalStatsBoxKey = "generalStatsBox";
   static final String moodsBoxKey = "moodsBox";
+  static final String periodsBoxKey = "periodsBox";
   static final String postsBoxKey = "postsBox";
   static final String usersBoxKey = "usersBox";
 
@@ -29,6 +31,7 @@ class HiveService {
     Hive.registerAdapter(CommentAdapter());
     Hive.registerAdapter(GeneralStatsAdapter());
     Hive.registerAdapter(MoodAdapter());
+    Hive.registerAdapter(PeriodAdapter());
     Hive.registerAdapter(PostAdapter());
     Hive.registerAdapter(UserAdapter());
 
@@ -39,6 +42,7 @@ class HiveService {
     await Hive.openBox<Comment>(commentsBoxKey);
     await Hive.openBox<GeneralStats>(generalStatsBoxKey);
     await Hive.openBox<Mood>(moodsBoxKey);
+    await Hive.openBox<Period>(periodsBoxKey);
     await Hive.openBox<Post>(postsBoxKey);
     await Hive.openBox<User>(usersBoxKey);
   }
@@ -49,6 +53,7 @@ class HiveService {
     await CommentRepository().hardRefresh();
     await GeneralStatsRepository().hardRefresh();
     await MoodRepository().hardRefresh();
+    await PeriodRepository().hardRefresh();
     await PostRepository().hardRefresh();
     await UserRepository().hardRefresh();
   }
