@@ -73,6 +73,11 @@ class _HomeContent extends StatelessWidget {
           childAspectRatio: .92,
           children: [
             _QuickLink(
+              title: 'Gym',
+              icon: LucideIcons.dumbbell,
+              onTap: () => context.push(RouteProvider.gym),
+            ),
+            _QuickLink(
               title: 'Period',
               icon: LucideIcons.calendarHeart,
               onTap: () => context.push(RouteProvider.periods),
