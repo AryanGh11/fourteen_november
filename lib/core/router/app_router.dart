@@ -1,13 +1,14 @@
 import 'package:go_router/go_router.dart';
+import 'package:fourteen_november/features/gift/gift.dart';
 import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/stats/stats.dart';
-import 'package:fourteen_november/features/weather/weather.dart';
 import 'package:fourteen_november/features/period/period.dart';
-import 'package:fourteen_november/core/router/route_provider.dart';
-import 'package:fourteen_november/features/mood/ui/mood_screen.dart';
-import 'package:fourteen_november/features/home/ui/home_screen.dart';
-import 'package:fourteen_november/features/gift/gift.dart';
 import 'package:fourteen_november/features/profile/profile.dart';
+import 'package:fourteen_november/features/weather/weather.dart';
+import 'package:fourteen_november/core/router/route_provider.dart';
+import 'package:fourteen_november/features/gym/ui/gym_screen.dart';
+import 'package:fourteen_november/features/home/ui/home_screen.dart';
+import 'package:fourteen_november/features/mood/ui/mood_screen.dart';
 import 'package:fourteen_november/features/background/background.dart';
 
 final appRouter = GoRouter(
@@ -25,6 +26,11 @@ final appRouter = GoRouter(
       builder: (context, state) {
         return MoodScreen();
       },
+    ),
+
+    GoRoute(
+      path: RouteProvider.gym,
+      builder: (context, state) => const GymScreen(),
     ),
 
     GoRoute(

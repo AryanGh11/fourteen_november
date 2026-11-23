@@ -1,13 +1,13 @@
-import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:fourteen_november/features/post/post.dart';
-import 'package:fourteen_november/features/alert/alert.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:fourteen_november/features/mood/mood.dart';
+import 'package:fourteen_november/features/post/post.dart';
 import 'package:fourteen_november/features/user/user.dart';
+import 'package:fourteen_november/features/alert/alert.dart';
 import 'package:fourteen_november/features/stats/stats.dart';
+import 'package:fourteen_november/features/period/period.dart';
 import 'package:fourteen_november/features/comment/comment.dart';
 import 'package:fourteen_november/features/background/background.dart';
-import 'package:fourteen_november/features/period/period.dart';
 
 class HiveService {
   static final String sharedPerformanceBoxKey = "sharedPerformanceBox";
@@ -16,6 +16,7 @@ class HiveService {
   static final String commentsBoxKey = "commentsBox";
   static final String generalStatsBoxKey = "generalStatsBox";
   static final String moodsBoxKey = "moodsBox";
+  static final String gymBoxKey = "gymBox";
   static final String periodsBoxKey = "periodsBox";
   static final String postsBoxKey = "postsBox";
   static final String usersBoxKey = "usersBox";
@@ -43,6 +44,7 @@ class HiveService {
     await Hive.openBox<GeneralStats>(generalStatsBoxKey);
     await Hive.openBox<Mood>(moodsBoxKey);
     await Hive.openBox<Period>(periodsBoxKey);
+    await Hive.openBox(gymBoxKey);
     await Hive.openBox<Post>(postsBoxKey);
     await Hive.openBox<User>(usersBoxKey);
   }

@@ -3,6 +3,8 @@ class RouteProvider {
 
   static String get moods => "/moods";
 
+  static String get gym => "/gym";
+
   static String get periods => "/periods";
 
   static String get posts => "/posts";
