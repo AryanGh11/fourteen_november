@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.0
+
+Adds a personal gym attendance tracker.
+
+### Added
+
+- **Gym tracker.** Log and delete gym days, browse attendance on a calendar, and see weekly, term and all-time counts.
+- **Flexible terms.** Set custom start and end dates, session allowance and weekly target. New terms default to 30 days, 12 sessions and a target of three per week.
+
+### Known issues
+
+- Gym data is stored on the device only and does not sync to Appwrite. Terms cannot currently be edited or deleted.
+- The gym screen has not been visually verified on a simulator build.
+
 ## 1.5.0
 
 Redesigns the home screen and improves period tracking.
